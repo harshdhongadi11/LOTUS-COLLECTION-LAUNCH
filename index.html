@@ -3,185 +3,464 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lotus Collection | Timeless Jewellery</title>
+  <title>Lotus Collection | Luxury 1 Gram Gold & Bridal Jewellery</title>
   
-  <!-- Tailwind CSS & Fonts -->
+  <!-- Tailwind CSS & Google Fonts -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
   <style>
-    body { font-family: 'Montserrat', sans-serif; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #faf8f5; color: #1c1917; }
     h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
   </style>
 
-  <!-- React & Babel for in-browser execution -->
+  <!-- React & Babel for seamless live loading -->
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body class="bg-[#fdfbf7] text-[#0a0a0a]">
+<body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
-    const { motion, AnimatePresence } = window.Motion;
+    const { useState, useMemo } = React;
 
-    // Contact info
-    const WHATSAPP_NUMBER = "7795955394"; 
-    const INSTAGRAM_HANDLE = "lotus.collection.in";
+    // --- STORE CONFIGURATION ---
+    const WHATSAPP_NUMBER = "917996957565"; 
+    const INSTAGRAM_HANDLE = "lotuscollection"; // Replace with your exact Instagram username
+    const INSTAGRAM_URL = "https://instagram.com/" + INSTAGRAM_HANDLE;
     const STORE_ADDRESS = "Bolmaal Galli Corner, Khade Bazar, Shahpur, Belgaum, Karnataka, India";
-    const LOGO_URL = "https://i.imgur.com/mTRD9lj.jpeg";
+    const LOGO_URL = "https://i.imgur.com/KrhDMkU.png";
+    const GOOGLE_MAPS_LINK = "https://maps.google.com/?q=Bolmaal+Galli+Corner,+Khade+Bazar,+Shahpur,+Belgaum";
 
-    const CATEGORIES = ["All", "Earrings", "Necklaces", "Bangles", "Rings", "Bridal"];
-    const COLLECTIONS = ["The Golden Classics", "Bridal Royalty", "Everyday Elegance", "Temple Treasures"];
+    // --- CATEGORIES & COLLECTIONS ---
+    const CATEGORIES = [
+      { name: "All", img: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=400" },
+      { name: "Necklaces", img: "https://images.unsplash.com/photo-1599643477839-a937a05ebf36?auto=format&fit=crop&q=80&w=400" },
+      { name: "Earrings", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=400" },
+      { name: "Bangles", img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=400" },
+      { name: "Bridal", img: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=400" }
+    ];
 
     const PRODUCTS = [
       {
         id: 1,
-        name: "Royal Kundan Bridal Set",
+        name: "Royal Kundan Heritage Choker Set",
         price: 45000,
         originalPrice: 55000,
         category: "Bridal",
-        collection: "Bridal Royalty",
+        tag: "Bestseller",
         image: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=800",
-        description: "An exquisite 1 gram gold bridal set featuring intricate Kundan work. Includes choker, long haram, earrings, and maang tikka.",
-        isNew: true,
-        isBestseller: true
+        description: "Intricate Kundan and pearl craftsmanship plated in authentic 1 gram gold finish."
       },
       {
         id: 2,
-        name: "Classic Antique Jhumkas",
+        name: "Temple Antique Goddess Jhumkas",
         price: 3200,
-        originalPrice: 4000,
+        originalPrice: 4200,
         category: "Earrings",
-        collection: "Temple Treasures",
+        tag: "Trending",
         image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800",
-        description: "Traditional temple design jhumkas with an antique finish and ruby red stones.",
-        isNew: false,
-        isBestseller: true
+        description: "Classic South-Indian antique motif adorned with fine rubies and hanging pearl clusters."
       },
       {
         id: 3,
-        name: "Lakshmi Coin Bangles Set",
+        name: "Lakshmi Kasu Traditional Bangles (Pair)",
         price: 4500,
-        originalPrice: 5000,
+        originalPrice: 5500,
         category: "Bangles",
-        collection: "The Golden Classics",
+        tag: "Handcrafted",
         image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800",
-        description: "Set of 2 beautifully crafted bangles featuring Goddess Lakshmi motifs.",
-        isNew: false,
-        isBestseller: true
+        description: "A pair of divine Lakshmi coin bangles with premium matte gold plating."
       },
       {
         id: 4,
-        name: "Emerald Drop Choker",
+        name: "Emerald Glow American Diamond Necklace",
         price: 8500,
-        originalPrice: 10000,
+        originalPrice: 11000,
         category: "Necklaces",
-        collection: "Everyday Elegance",
+        tag: "New Arrival",
         image: "https://images.unsplash.com/photo-1599643477839-a937a05ebf36?auto=format&fit=crop&q=80&w=800",
-        description: "A delicate choker necklace studded with emerald green stones and fine American diamonds.",
-        isNew: true,
-        isBestseller: false
+        description: "Modern high-radiance AD stones accented with regal emerald-cut simulants."
+      },
+      {
+        id: 5,
+        name: "Maharani Bridal Long Haram",
+        price: 18500,
+        originalPrice: 22000,
+        category: "Bridal",
+        tag: "Exclusive",
+        image: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=800",
+        description: "Grand bridal haar designed for weddings and special festive moments."
+      },
+      {
+        id: 6,
+        name: "Floral Cz Solitaire Cocktail Ring",
+        price: 1800,
+        originalPrice: 2400,
+        category: "Earrings",
+        tag: "Popular",
+        image: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=800",
+        description: "Rhodium-coated ring with brilliant micro-pave crystal setting."
       }
     ];
 
-    const formatPrice = (price) => "₹" + price.toLocaleString("en-IN");
+    const formatPrice = (p) => "₹" + p.toLocaleString("en-IN");
 
     function App() {
-      const [cart, setCart] = useState([]);
-      const [category, setCategory] = useState("All");
+      const [selectedCat, setSelectedCat] = useState("All");
+      const [searchQuery, setSearchQuery] = useState("");
 
-      const addToCart = (product) => {
-        setCart([...cart, product]);
-        alert(`${product.name} added to cart!`);
-      };
-
-      const filtered = category === "All" 
-        ? PRODUCTS 
-        : PRODUCTS.filter(p => p.category === category);
+      const filtered = useMemo(() => {
+        return PRODUCTS.filter(p => {
+          const matchCat = selectedCat === "All" || p.category === selectedCat;
+          const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              p.category.toLowerCase().includes(searchQuery.toLowerCase());
+          return matchCat && matchSearch;
+        });
+      }, [selectedCat, searchQuery]);
 
       return (
-        <div className="min-h-screen">
-          {/* Header */}
-          <nav className="fixed w-full z-40 bg-[#fdfbf7]/95 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <img src={LOGO_URL} alt="Lotus Collection" className="h-10 w-auto object-contain rounded" />
-              <span className="text-xl md:text-2xl font-serif font-bold tracking-widest text-[#6a040f] uppercase">Lotus Collection</span>
-            </div>
+        <div className="min-h-screen flex flex-col">
+          
+          {/* 1. TOP ANNOUNCEMENT BAR (Tanishq Style) */}
+          <div className="bg-[#5a0017] text-[#f7e6b5] text-xs py-2 px-4 text-center font-medium tracking-wider flex justify-between items-center max-w-7xl mx-auto w-full">
+            <span className="hidden sm:inline">✨ Discover Pure Elegance in 1 Gram Gold & Bridal Collections</span>
+            <span className="mx-auto sm:mx-0">Direct Store Orders: +91 7996957565 / +91 7996953111</span>
             <a 
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20would%20like%20to%20enquire%20about%20your%20jewellery.`}
-              target="_blank"
-              className="bg-[#25D366] text-white px-4 py-2 rounded-full text-sm font-semibold tracking-wider hover:opacity-90 flex items-center gap-2"
+              href={INSTAGRAM_URL} 
+              target="_blank" 
+              rel="noreferrer" 
+              className="hidden md:flex items-center gap-1 hover:text-white underline"
             >
-              WhatsApp Us
-            </a>
-          </nav>
-
-          {/* Hero Banner */}
-          <div className="pt-28 pb-16 bg-[#0a0a0a] text-center text-white px-4">
-            <p className="text-[#D4AF37] uppercase tracking-[0.3em] text-sm mb-3">Bolmaal Galli, Shahpur, Belgaum</p>
-            <h1 className="text-4xl md:text-6xl font-serif tracking-wide mb-4">LOTUS COLLECTION</h1>
-            <p className="italic text-gray-300 max-w-xl mx-auto mb-8 font-serif">“Timeless Jewellery. Made to Shine.”</p>
-            <a href="#catalogue" className="inline-block bg-[#D4AF37] text-[#0a0a0a] font-bold px-8 py-3 text-sm uppercase tracking-widest hover:bg-white transition-all">
-              Explore Catalogue
+              Follow @{INSTAGRAM_HANDLE}
             </a>
           </div>
 
-          {/* Category Tabs */}
-          <div id="catalogue" className="max-w-6xl mx-auto px-4 py-12">
-            <div className="flex justify-center gap-3 flex-wrap mb-10">
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  className={`px-5 py-2 text-xs uppercase tracking-widest rounded-full transition-all ${category === cat ? 'bg-[#6a040f] text-white' : 'border border-gray-300 hover:border-[#D4AF37]'}`}
+          {/* 2. MAIN HEADER (Clean White Luxury Style) */}
+          <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex items-center justify-between gap-4">
+              
+              {/* Brand Logo & Name */}
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => { setSelectedCat("All"); window.scrollTo({top: 0, behavior: 'smooth'}); }}>
+                <img src={LOGO_URL} alt="Lotus Collection" className="h-12 w-auto object-contain" />
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-serif font-bold text-[#5a0017] tracking-wider uppercase leading-none">
+                    Lotus Collection
+                  </h1>
+                  <span className="text-[10px] tracking-[0.25em] text-[#99793d] uppercase font-semibold">Jewellers • Belgaum</span>
+                </div>
+              </div>
+
+              {/* Search Bar */}
+              <div className="hidden lg:flex flex-1 max-w-md mx-6">
+                <input 
+                  type="text" 
+                  placeholder="Search for Jhumkas, Bridal Sets, Bangles..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-stone-100 border border-stone-300 rounded-full px-5 py-2 text-xs text-stone-800 outline-none focus:border-[#99793d]"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-4">
+                {/* Instagram Button */}
+                <a 
+                  href={INSTAGRAM_URL} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="flex items-center gap-2 border border-stone-300 rounded-full px-3 py-1.5 text-xs font-semibold hover:border-pink-500 hover:text-pink-600 transition-colors"
                 >
-                  {cat}
-                </button>
-              ))}
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                  <span className="hidden sm:inline">Instagram</span>
+                </a>
+
+                {/* WhatsApp Chat Button */}
+                <a 
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20your%20jewellery%20catalogue.`}
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="bg-[#25D366] text-white px-4 py-2 rounded-full text-xs font-semibold hover:bg-[#1faa53] flex items-center gap-1.5 shadow-sm"
+                >
+                  <span>WhatsApp Enquire</span>
+                </a>
+              </div>
             </div>
 
-            {/* Product Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {filtered.map(p => (
-                <div key={p.id} className="bg-white border rounded overflow-hidden shadow-sm flex flex-col">
-                  <div className="relative aspect-square">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+            {/* Navigation Category Bar */}
+            <div className="bg-[#faf6ee] border-t border-b border-stone-200 py-2.5 px-4 overflow-x-auto">
+              <div className="max-w-7xl mx-auto flex justify-center items-center gap-4 sm:gap-8 whitespace-nowrap text-xs font-semibold tracking-widest uppercase text-stone-700">
+                {CATEGORIES.map(c => (
+                  <button 
+                    key={c.name}
+                    onClick={() => setSelectedCat(c.name)}
+                    className={`transition-colors pb-1 border-b-2 ${selectedCat === c.name ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent hover:text-[#99793d]'}`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </header>
+
+          {/* 3. HERO BANNER (Tanishq Grand Bridal Look) */}
+          <section 
+            className="relative min-h-[460px] flex items-center justify-center text-center text-white px-4 bg-cover bg-center"
+            style={{
+              backgroundImage: `linear-gradient(rgba(10, 5, 5, 0.65), rgba(40, 10, 15, 0.7)), url('https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000')`
+            }}
+          >
+            <div className="max-w-3xl mx-auto py-16">
+              <span className="text-[#f7e6b5] text-xs sm:text-sm font-semibold tracking-[0.35em] uppercase block mb-3">
+                Exquisite Craftsmanship & Bridal Splendour
+              </span>
+              <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold tracking-wide uppercase leading-tight mb-4 drop-shadow-md">
+                Royal 1 Gram Gold Jewellery
+              </h2>
+              <p className="italic text-stone-200 text-sm sm:text-base font-serif max-w-xl mx-auto mb-8">
+                Designed to make every bride and festive occasion shine with timeless Indian beauty.
+              </p>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <a 
+                  href="#catalogue" 
+                  className="bg-[#99793d] text-white px-8 py-3.5 text-xs uppercase tracking-widest font-bold hover:bg-[#b58f4a] transition-all shadow-lg"
+                >
+                  Explore Collection
+                </a>
+                <a 
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hi,%20I%20want%20to%20view%20your%20latest%20bridal%20designs.`}
+                  target="_blank"
+                  className="border border-[#f7e6b5] text-[#f7e6b5] px-8 py-3.5 text-xs uppercase tracking-widest font-bold hover:bg-white hover:text-black transition-all"
+                >
+                  Book Store Appointment
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* 4. SHOP BY CATEGORY (Tanishq Circular Cards) */}
+          <section className="py-14 max-w-7xl mx-auto px-4 sm:px-8 w-full">
+            <div className="text-center mb-10">
+              <h3 className="text-2xl sm:text-3xl font-serif text-[#5a0017] uppercase tracking-wider font-bold">
+                Shop By Category
+              </h3>
+              <div className="w-16 h-0.5 bg-[#99793d] mx-auto mt-2"></div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+              {CATEGORIES.map(cat => (
+                <div 
+                  key={cat.name}
+                  onClick={() => { setSelectedCat(cat.name); document.getElementById('catalogue').scrollIntoView({behavior: 'smooth'}); }}
+                  className="flex flex-col items-center cursor-pointer group"
+                >
+                  <div className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 p-1 transition-all duration-300 ${selectedCat === cat.name ? 'border-[#5a0017] scale-105 shadow-md' : 'border-stone-300 group-hover:border-[#99793d]'}`}>
+                    <img src={cat.img} alt={cat.name} className="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-500" />
                   </div>
-                  <div className="p-4 flex-1 flex flex-col justify-between">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold">{p.category}</span>
-                      <h3 className="font-serif font-semibold text-gray-900 mt-1">{p.name}</h3>
-                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
-                    </div>
-                    <div className="mt-4 pt-3 border-t flex justify-between items-center">
-                      <span className="font-bold text-[#6a040f]">{formatPrice(p.price)}</span>
-                      <a 
-                        href={`https://wa.me/${WHATSAPP_NUMBER}?text=I%20am%20interested%20in%20${encodeURIComponent(p.name)}%20(${formatPrice(p.price)})`}
-                        target="_blank"
-                        className="bg-[#6a040f] text-white text-xs px-3 py-2 uppercase tracking-wider hover:bg-[#D4AF37] hover:text-black transition-colors"
-                      >
-                        Enquire
-                      </a>
-                    </div>
-                  </div>
+                  <h4 className="mt-3 text-xs sm:text-sm font-semibold tracking-wider uppercase text-stone-800 group-hover:text-[#5a0017]">
+                    {cat.name}
+                  </h4>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Footer */}
-          <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-6 border-t border-gray-800 text-center text-sm">
-            <h4 className="text-white font-serif text-lg tracking-widest mb-2">LOTUS COLLECTION</h4>
-            <p className="max-w-md mx-auto mb-4">{STORE_ADDRESS}</p>
-            <p className="text-[#D4AF37]">Call / WhatsApp: +91 7996957565 / +91 7996953111</p>
-            <p className="mt-8 text-xs text-gray-600">&copy; {new Date().getFullYear()} Lotus Collection. All rights reserved.</p>
+          {/* 5. PRODUCT CATALOGUE SECTION */}
+          <section id="catalogue" className="py-12 bg-white border-t border-stone-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-8">
+              
+              <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+                <div>
+                  <h3 className="text-xl sm:text-2xl font-serif text-[#5a0017] font-bold uppercase tracking-wider">
+                    {selectedCat === "All" ? "Curated Jewellery Collection" : `${selectedCat} Collection`}
+                  </h3>
+                  <p className="text-xs text-stone-500 mt-1">Showing {filtered.length} designs available in Shahpur store</p>
+                </div>
+                
+                {/* Mobile search bar */}
+                <div className="w-full sm:w-auto lg:hidden">
+                  <input 
+                    type="text" 
+                    placeholder="Search jewellery..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full bg-stone-100 border border-stone-300 rounded-full px-4 py-2 text-xs"
+                  />
+                </div>
+              </div>
+
+              {/* Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8">
+                {filtered.map(product => (
+                  <div key={product.id} className="group bg-[#faf8f5] border border-stone-200 rounded overflow-hidden flex flex-col hover:shadow-xl transition-all duration-300">
+                    
+                    {/* Image with Tag */}
+                    <div className="relative aspect-[4/5] overflow-hidden bg-stone-100">
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      {product.tag && (
+                        <span className="absolute top-3 left-3 bg-[#5a0017] text-white text-[10px] uppercase font-bold tracking-widest px-2.5 py-1 rounded">
+                          {product.tag}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Product Details */}
+                    <div className="p-5 flex-1 flex flex-col justify-between">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-[#99793d]">{product.category}</span>
+                        <h4 className="font-serif font-bold text-stone-900 text-base mt-1 group-hover:text-[#5a0017] transition-colors line-clamp-1">
+                          {product.name}
+                        </h4>
+                        <p className="text-xs text-stone-500 mt-1.5 line-clamp-2 leading-relaxed">
+                          {product.description}
+                        </p>
+                      </div>
+
+                      <div className="mt-5 pt-4 border-t border-stone-200 flex items-center justify-between">
+                        <div>
+                          <div className="text-lg font-bold text-[#5a0017]">{formatPrice(product.price)}</div>
+                          {product.originalPrice && (
+                            <div className="text-xs text-stone-400 line-through">{formatPrice(product.originalPrice)}</div>
+                          )}
+                        </div>
+                        <a 
+                          href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20*${encodeURIComponent(product.name)}*%20(${formatPrice(product.price)}).%20Please%20share%20more%20details.`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-[#5a0017] text-white hover:bg-[#99793d] px-4 py-2 text-xs uppercase tracking-wider font-semibold rounded transition-colors"
+                        >
+                          Enquire Now
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filtered.length === 0 && (
+                <div className="text-center py-16 text-stone-500">
+                  <p className="text-lg font-serif">No jewellery found matching your search.</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 6. INSTAGRAM & SOCIAL SECTION (Tanishq Style) */}
+          <section className="py-14 bg-[#faf6ee] border-t border-stone-200 text-center px-4">
+            <div className="max-w-4xl mx-auto">
+              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[#99793d]">Connect With Us</span>
+              <h3 className="text-2xl sm:text-3xl font-serif font-bold text-[#5a0017] mt-1 mb-3">
+                Follow Us On Instagram
+              </h3>
+              <p className="text-xs sm:text-sm text-stone-600 mb-6 max-w-lg mx-auto">
+                Explore real bridal videos, daily new arrivals, customer showcases, and behind-the-scenes on our official Instagram page.
+              </p>
+              <a 
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-bold text-xs uppercase tracking-widest px-6 py-3 rounded-full shadow hover:opacity-90 transition-opacity"
+              >
+                <span>Visit @{INSTAGRAM_HANDLE}</span>
+              </a>
+            </div>
+          </section>
+
+          {/* 7. TRUST PROMISES (Tanishq Guarantee Badges) */}
+          <section className="py-10 bg-white border-t border-stone-200">
+            <div className="max-w-6xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-xs">
+              <div className="p-4">
+                <div className="text-2xl mb-2">💎</div>
+                <h5 className="font-bold text-stone-800 uppercase tracking-wider mb-1">1 Gram Gold Polish</h5>
+                <p className="text-stone-500">Premium long-lasting shine & high-grade finishing</p>
+              </div>
+              <div className="p-4">
+                <div className="text-2xl mb-2">✨</div>
+                <h5 className="font-bold text-stone-800 uppercase tracking-wider mb-1">Authentic Designs</h5>
+                <p className="text-stone-500">Handpicked South Indian temple & bridal pieces</p>
+              </div>
+              <div className="p-4">
+                <div className="text-2xl mb-2">📦</div>
+                <h5 className="font-bold text-stone-800 uppercase tracking-wider mb-1">Safe Shipping</h5>
+                <p className="text-stone-500">Carefully packaged and delivered to your doorstep</p>
+              </div>
+              <div className="p-4">
+                <div className="text-2xl mb-2">🏪</div>
+                <h5 className="font-bold text-stone-800 uppercase tracking-wider mb-1">Store In Belgaum</h5>
+                <p className="text-stone-500">Visit our physical shop in Shahpur for trials</p>
+              </div>
+            </div>
+          </section>
+
+          {/* 8. FOOTER */}
+          <footer className="bg-[#1c1917] text-stone-300 pt-14 pb-8 border-t-2 border-[#99793d] mt-auto">
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-stone-800">
+              
+              {/* Col 1 */}
+              <div>
+                <h4 className="text-lg font-serif text-[#f7e6b5] font-bold tracking-widest uppercase mb-3">Lotus Collection</h4>
+                <p className="text-xs text-stone-400 leading-relaxed mb-4">
+                  Bolmaal Galli Corner, Khade Bazar, Shahpur, Belgaum, Karnataka, India. Offering top-quality bridal, American diamond, and temple jewellery.
+                </p>
+                <div className="text-xs text-[#99793d] font-semibold">
+                  Phone: +91 7996957565 / +91 7996953111
+                </div>
+              </div>
+
+              {/* Col 2: Quick Links */}
+              <div>
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Quick Links</h4>
+                <ul className="space-y-2 text-xs text-stone-400">
+                  <li><button onClick={() => { setSelectedCat("All"); window.scrollTo({top:0, behavior:'smooth'}); }} className="hover:text-white">All Jewellery</button></li>
+                  <li><button onClick={() => { setSelectedCat("Bridal"); document.getElementById('catalogue').scrollIntoView({behavior:'smooth'}); }} className="hover:text-white">Bridal Sets</button></li>
+                  <li><button onClick={() => { setSelectedCat("Earrings"); document.getElementById('catalogue').scrollIntoView({behavior:'smooth'}); }} className="hover:text-white">Antique Jhumkas</button></li>
+                  <li><a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="hover:text-white">Instagram Profile</a></li>
+                </ul>
+              </div>
+
+              {/* Col 3: Visit Store Map */}
+              <div>
+                <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Store Location</h4>
+                <p className="text-xs text-stone-400 mb-3">{STORE_ADDRESS}</p>
+                <a 
+                  href={GOOGLE_MAPS_LINK} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="inline-block bg-[#99793d] text-white text-xs font-bold uppercase tracking-widest px-4 py-2 hover:bg-[#b58f4a] transition-colors"
+                >
+                  Open in Google Maps
+                </a>
+              </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-6 flex flex-col sm:flex-row justify-between items-center text-[11px] text-stone-500">
+              <p>&copy; {new Date().getFullYear()} Lotus Collection Jewellers. All rights reserved.</p>
+              <p className="mt-2 sm:mt-0">Shahpur, Belgaum</p>
+            </div>
           </footer>
+
+          {/* Floating WhatsApp CTA */}
+          <a 
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20your%20jewellery.`}
+            target="_blank" 
+            rel="noreferrer"
+            className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-3.5 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center"
+            title="Chat on WhatsApp"
+          >
+            <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+          </a>
+
         </div>
       );
     }
