@@ -1,0 +1,193 @@
+index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lotus Collection | Timeless Jewellery</title>
+  
+  <!-- Tailwind CSS & Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
+  </style>
+
+  <!-- React & Babel for in-browser execution -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-[#fdfbf7] text-[#0a0a0a]">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+    const { motion, AnimatePresence } = window.Motion;
+
+    // Contact info
+    const WHATSAPP_NUMBER = "917996957565"; 
+    const INSTAGRAM_HANDLE = "lotuscollection";
+    const STORE_ADDRESS = "Bolmaal Galli Corner, Khade Bazar, Shahpur, Belgaum, Karnataka, India";
+    const LOGO_URL = "https://i.imgur.com/KrhDMkU.png";
+
+    const CATEGORIES = ["All", "Earrings", "Necklaces", "Bangles", "Rings", "Bridal"];
+    const COLLECTIONS = ["The Golden Classics", "Bridal Royalty", "Everyday Elegance", "Temple Treasures"];
+
+    const PRODUCTS = [
+      {
+        id: 1,
+        name: "Royal Kundan Bridal Set",
+        price: 45000,
+        originalPrice: 55000,
+        category: "Bridal",
+        collection: "Bridal Royalty",
+        image: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=800",
+        description: "An exquisite 1 gram gold bridal set featuring intricate Kundan work. Includes choker, long haram, earrings, and maang tikka.",
+        isNew: true,
+        isBestseller: true
+      },
+      {
+        id: 2,
+        name: "Classic Antique Jhumkas",
+        price: 3200,
+        originalPrice: 4000,
+        category: "Earrings",
+        collection: "Temple Treasures",
+        image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=800",
+        description: "Traditional temple design jhumkas with an antique finish and ruby red stones.",
+        isNew: false,
+        isBestseller: true
+      },
+      {
+        id: 3,
+        name: "Lakshmi Coin Bangles Set",
+        price: 4500,
+        originalPrice: 5000,
+        category: "Bangles",
+        collection: "The Golden Classics",
+        image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=800",
+        description: "Set of 2 beautifully crafted bangles featuring Goddess Lakshmi motifs.",
+        isNew: false,
+        isBestseller: true
+      },
+      {
+        id: 4,
+        name: "Emerald Drop Choker",
+        price: 8500,
+        originalPrice: 10000,
+        category: "Necklaces",
+        collection: "Everyday Elegance",
+        image: "https://images.unsplash.com/photo-1599643477839-a937a05ebf36?auto=format&fit=crop&q=80&w=800",
+        description: "A delicate choker necklace studded with emerald green stones and fine American diamonds.",
+        isNew: true,
+        isBestseller: false
+      }
+    ];
+
+    const formatPrice = (price) => "₹" + price.toLocaleString("en-IN");
+
+    function App() {
+      const [cart, setCart] = useState([]);
+      const [category, setCategory] = useState("All");
+
+      const addToCart = (product) => {
+        setCart([...cart, product]);
+        alert(`${product.name} added to cart!`);
+      };
+
+      const filtered = category === "All" 
+        ? PRODUCTS 
+        : PRODUCTS.filter(p => p.category === category);
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <nav className="fixed w-full z-40 bg-[#fdfbf7]/95 backdrop-blur-md shadow-sm py-4 px-6 md:px-12 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <img src={LOGO_URL} alt="Lotus Collection" className="h-10 w-auto object-contain rounded" />
+              <span className="text-xl md:text-2xl font-serif font-bold tracking-widest text-[#6a040f] uppercase">Lotus Collection</span>
+            </div>
+            <a 
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20would%20like%20to%20enquire%20about%20your%20jewellery.`}
+              target="_blank"
+              className="bg-[#25D366] text-white px-4 py-2 rounded-full text-sm font-semibold tracking-wider hover:opacity-90 flex items-center gap-2"
+            >
+              WhatsApp Us
+            </a>
+          </nav>
+
+          {/* Hero Banner */}
+          <div className="pt-28 pb-16 bg-[#0a0a0a] text-center text-white px-4">
+            <p className="text-[#D4AF37] uppercase tracking-[0.3em] text-sm mb-3">Bolmaal Galli, Shahpur, Belgaum</p>
+            <h1 className="text-4xl md:text-6xl font-serif tracking-wide mb-4">LOTUS COLLECTION</h1>
+            <p className="italic text-gray-300 max-w-xl mx-auto mb-8 font-serif">“Timeless Jewellery. Made to Shine.”</p>
+            <a href="#catalogue" className="inline-block bg-[#D4AF37] text-[#0a0a0a] font-bold px-8 py-3 text-sm uppercase tracking-widest hover:bg-white transition-all">
+              Explore Catalogue
+            </a>
+          </div>
+
+          {/* Category Tabs */}
+          <div id="catalogue" className="max-w-6xl mx-auto px-4 py-12">
+            <div className="flex justify-center gap-3 flex-wrap mb-10">
+              {CATEGORIES.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  className={`px-5 py-2 text-xs uppercase tracking-widest rounded-full transition-all ${category === cat ? 'bg-[#6a040f] text-white' : 'border border-gray-300 hover:border-[#D4AF37]'}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* Product Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              {filtered.map(p => (
+                <div key={p.id} className="bg-white border rounded overflow-hidden shadow-sm flex flex-col">
+                  <div className="relative aspect-square">
+                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold">{p.category}</span>
+                      <h3 className="font-serif font-semibold text-gray-900 mt-1">{p.name}</h3>
+                      <p className="text-xs text-gray-500 mt-1 line-clamp-2">{p.description}</p>
+                    </div>
+                    <div className="mt-4 pt-3 border-t flex justify-between items-center">
+                      <span className="font-bold text-[#6a040f]">{formatPrice(p.price)}</span>
+                      <a 
+                        href={`https://wa.me/${WHATSAPP_NUMBER}?text=I%20am%20interested%20in%20${encodeURIComponent(p.name)}%20(${formatPrice(p.price)})`}
+                        target="_blank"
+                        className="bg-[#6a040f] text-white text-xs px-3 py-2 uppercase tracking-wider hover:bg-[#D4AF37] hover:text-black transition-colors"
+                      >
+                        Enquire
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer className="bg-[#0a0a0a] text-gray-400 py-12 px-6 border-t border-gray-800 text-center text-sm">
+            <h4 className="text-white font-serif text-lg tracking-widest mb-2">LOTUS COLLECTION</h4>
+            <p className="max-w-md mx-auto mb-4">{STORE_ADDRESS}</p>
+            <p className="text-[#D4AF37]">Call / WhatsApp: +91 7996957565 / +91 7996953111</p>
+            <p className="mt-8 text-xs text-gray-600">&copy; {new Date().getFullYear()} Lotus Collection. All rights reserved.</p>
+          </footer>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
