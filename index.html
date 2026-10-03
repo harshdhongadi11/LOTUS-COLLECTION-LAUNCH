@@ -55,6 +55,14 @@
       { name: "Bridal", img: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=400" }
     ];
 
+    const DEFAULT_BANNER = {
+      subtitle: "Exquisite Craftsmanship & Bridal Splendour",
+      title: "Royal 1 Gram Gold Jewellery",
+      description: "Designed to make every bride and festive occasion shine with timeless Indian beauty.",
+      mediaType: "image", // 'image' or 'video'
+      mediaUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000"
+    };
+
     const DEFAULT_PRODUCTS = [
       {
         id: 1,
@@ -142,7 +150,6 @@
           </button>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 sm:p-10 rounded-2xl border border-stone-200 shadow-sm">
-            {/* Left: Interactive Zoom Preview Box */}
             <div className="flex flex-col items-center">
               <div 
                 className="relative w-full aspect-square bg-[#faf8f5] rounded-xl overflow-hidden cursor-crosshair border border-stone-200 shadow-inner"
@@ -179,7 +186,6 @@
               <p className="text-[11px] text-stone-400 mt-2 text-center">Move your cursor over the jewellery to inspect intricate stone and polish work.</p>
             </div>
 
-            {/* Right: Price & Buying Information */}
             <div className="flex flex-col justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-2">
@@ -224,7 +230,6 @@
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="pt-6 border-t border-stone-200 space-y-3">
                 <a 
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20want%20to%20buy/enquire%20about%20*${encodeURIComponent(product.name)}*%20(${formatPrice(product.price)}).%20Please%20confirm%20availability.`}
@@ -252,11 +257,13 @@
     }
 
     // --- PROTECTED OWNER-ONLY ADMIN PORTAL ---
-    function OwnerManagerModal({ products, setProducts, onClose }) {
+    function OwnerManagerModal({ products, setProducts, banner, setBanner, onClose }) {
       const [isAuthenticated, setIsAuthenticated] = useState(false);
       const [enteredPin, setEnteredPin] = useState("");
       const [pinError, setPinError] = useState(false);
+      const [activeTab, setActiveTab] = useState("products"); // 'products' or 'banner'
 
+      // Product Form State
       const [name, setName] = useState("");
       const [price, setPrice] = useState("");
       const [originalPrice, setOriginalPrice] = useState("");
@@ -264,6 +271,13 @@
       const [tag, setTag] = useState("New Arrival");
       const [description, setDescription] = useState("");
       const [imagePreview, setImagePreview] = useState("");
+
+      // Banner Form State
+      const [bannerSubtitle, setBannerSubtitle] = useState(banner.subtitle);
+      const [bannerTitle, setBannerTitle] = useState(banner.title);
+      const [bannerDesc, setBannerDesc] = useState(banner.description);
+      const [bannerMediaUrl, setBannerMediaUrl] = useState(banner.mediaUrl);
+      const [bannerMediaType, setBannerMediaType] = useState(banner.mediaType);
 
       const handleLogin = (e) => {
         e.preventDefault();
@@ -282,6 +296,33 @@
           reader.onloadend = () => setImagePreview(reader.result);
           reader.readAsDataURL(file);
         }
+      };
+
+      const handleBannerMediaUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const isVideo = file.type.startsWith("video");
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setBannerMediaUrl(reader.result);
+            setBannerMediaType(isVideo ? "video" : "image");
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleSaveBanner = (e) => {
+        e.preventDefault();
+        const updated = {
+          subtitle: bannerSubtitle,
+          title: bannerTitle,
+          description: bannerDesc,
+          mediaType: bannerMediaType,
+          mediaUrl: bannerMediaUrl
+        };
+        setBanner(updated);
+        localStorage.setItem("lotus_banner", JSON.stringify(updated));
+        alert("✨ Banner details updated successfully!");
       };
 
       const handleAddProduct = (e) => {
@@ -328,7 +369,7 @@
             <div className="flex justify-between items-center border-b pb-4 mb-6">
               <div>
                 <h2 className="text-xl font-bold font-serif text-[#5a0017]">Owner Control Portal</h2>
-                <p className="text-xs text-stone-500">Manage jewellery photographs, inventory, and rates.</p>
+                <p className="text-xs text-stone-500">Manage jewellery photographs, banner animation, and rates.</p>
               </div>
               <button 
                 onClick={onClose} 
@@ -344,10 +385,10 @@
                   🔒
                 </div>
                 <h3 className="font-serif text-lg font-bold text-stone-800 mb-1">Enter Owner Passcode</h3>
-                <p className="text-xs text-stone-500 mb-4">Please type your PIN to upload photos or edit prices.</p>
+                <p className="text-xs text-stone-500 mb-4">Please type your PIN to unlock.</p>
                 <input 
                   type="password"
-                  placeholder="Enter passcode"
+                  placeholder="••••••••"
                   value={enteredPin}
                   onChange={(e) => setEnteredPin(e.target.value)}
                   className="w-full text-center tracking-widest text-lg font-bold p-3 border rounded-xl outline-none focus:border-[#5a0017] mb-3"
@@ -363,128 +404,219 @@
               </form>
             ) : (
               <div>
-                <form onSubmit={handleAddProduct} className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#faf8f5] p-5 rounded-xl border border-stone-200">
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Jewellery Name</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Royal South Indian Bridal Choker"
-                      value={name} 
-                      onChange={e => setName(e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
-                      required
-                    />
-                  </div>
+                {/* Tabs */}
+                <div className="flex border-b border-stone-200 mb-6 gap-6 text-xs font-bold uppercase tracking-wider">
+                  <button 
+                    onClick={() => setActiveTab("products")}
+                    className={`pb-2.5 transition-colors border-b-2 ${activeTab === 'products' ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent text-stone-500 hover:text-stone-800'}`}
+                  >
+                    💎 Jewellery Inventory
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab("banner")}
+                    className={`pb-2.5 transition-colors border-b-2 ${activeTab === 'banner' ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent text-stone-500 hover:text-stone-800'}`}
+                  >
+                    🎬 Hero Banner & Animation
+                  </button>
+                </div>
 
+                {activeTab === "products" ? (
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Selling Price (₹)</label>
-                    <input 
-                      type="number" 
-                      placeholder="e.g. 4500"
-                      value={price} 
-                      onChange={e => setPrice(e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Original Price (₹) (Optional strikethrough)</label>
-                    <input 
-                      type="number" 
-                      placeholder="e.g. 6000"
-                      value={originalPrice} 
-                      onChange={e => setOriginalPrice(e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Category</label>
-                    <select 
-                      value={category} 
-                      onChange={e => setCategory(e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]"
-                    >
-                      <option value="Necklaces">Necklaces</option>
-                      <option value="Earrings">Earrings</option>
-                      <option value="Bangles">Bangles</option>
-                      <option value="Bridal">Bridal</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Tag (Badge)</label>
-                    <input 
-                      type="text" 
-                      placeholder="e.g. Bestseller, New Arrival, Trending"
-                      value={tag} 
-                      onChange={e => setTag(e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Description</label>
-                    <textarea 
-                      placeholder="Write brief details about the stones, polish, or craftsmanship..."
-                      value={description} 
-                      onChange={e => setDescription(e.target.value)}
-                      rows="2"
-                      className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
-                      Choose Photo (Direct from Phone or Computer)
-                    </label>
-                    <input 
-                      type="file" 
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="w-full bg-white border border-dashed border-stone-300 rounded-lg p-3 text-xs" 
-                    />
-                    {imagePreview && (
-                      <div className="mt-3 flex items-center gap-3">
-                        <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded border" />
-                        <span className="text-xs text-green-700 font-semibold">✓ Photo attached!</span>
+                    <form onSubmit={handleAddProduct} className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#faf8f5] p-5 rounded-xl border border-stone-200">
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Jewellery Name</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Royal South Indian Bridal Choker"
+                          value={name} 
+                          onChange={e => setName(e.target.value)}
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                          required
+                        />
                       </div>
-                    )}
-                  </div>
 
-                  <div className="sm:col-span-2 pt-2">
-                    <button 
-                      type="submit" 
-                      className="w-full bg-[#5a0017] hover:bg-[#78001f] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-widest transition shadow"
-                    >
-                      ➕ Upload & Publish Jewellery
-                    </button>
-                  </div>
-                </form>
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Selling Price (₹)</label>
+                        <input 
+                          type="number" 
+                          placeholder="e.g. 4500"
+                          value={price} 
+                          onChange={e => setPrice(e.target.value)}
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                          required
+                        />
+                      </div>
 
-                <div className="mt-8">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-stone-800 mb-3">Live Items ({products.length})</h3>
-                  <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
-                    {products.map(p => (
-                      <div key={p.id} className="flex items-center justify-between bg-stone-50 border p-2.5 rounded-lg text-xs">
-                        <div className="flex items-center gap-3">
-                          <img src={p.image} className="w-10 h-10 object-cover rounded" alt="" />
-                          <div>
-                            <div className="font-bold text-stone-800">{p.name}</div>
-                            <div className="text-stone-500">{formatPrice(p.price)} • {p.category}</div>
-                          </div>
-                        </div>
-                        <button 
-                          onClick={() => handleDelete(p.id)}
-                          className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded font-bold transition"
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Original Price (₹) (Optional strikethrough)</label>
+                        <input 
+                          type="number" 
+                          placeholder="e.g. 6000"
+                          value={originalPrice} 
+                          onChange={e => setOriginalPrice(e.target.value)}
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Category</label>
+                        <select 
+                          value={category} 
+                          onChange={e => setCategory(e.target.value)}
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]"
                         >
-                          Delete
+                          <option value="Necklaces">Necklaces</option>
+                          <option value="Earrings">Earrings</option>
+                          <option value="Bangles">Bangles</option>
+                          <option value="Bridal">Bridal</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Tag (Badge)</label>
+                        <input 
+                          type="text" 
+                          placeholder="e.g. Bestseller, New Arrival, Trending"
+                          value={tag} 
+                          onChange={e => setTag(e.target.value)}
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Description</label>
+                        <textarea 
+                          placeholder="Write brief details about the stones, polish, or craftsmanship..."
+                          value={description} 
+                          onChange={e => setDescription(e.target.value)}
+                          rows="2"
+                          className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                          Choose Photo (Direct from Phone or Computer)
+                        </label>
+                        <input 
+                          type="file" 
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="w-full bg-white border border-dashed border-stone-300 rounded-lg p-3 text-xs" 
+                        />
+                        {imagePreview && (
+                          <div className="mt-3 flex items-center gap-3">
+                            <img src={imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded border" />
+                            <span className="text-xs text-green-700 font-semibold">✓ Photo attached!</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="sm:col-span-2 pt-2">
+                        <button 
+                          type="submit" 
+                          className="w-full bg-[#5a0017] hover:bg-[#78001f] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-widest transition shadow"
+                        >
+                          ➕ Upload & Publish Jewellery
                         </button>
                       </div>
-                    ))}
+                    </form>
+
+                    <div className="mt-8">
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-stone-800 mb-3">Live Items ({products.length})</h3>
+                      <div className="max-h-56 overflow-y-auto space-y-2 pr-1">
+                        {products.map(p => (
+                          <div key={p.id} className="flex items-center justify-between bg-stone-50 border p-2.5 rounded-lg text-xs">
+                            <div className="flex items-center gap-3">
+                              <img src={p.image} className="w-10 h-10 object-cover rounded" alt="" />
+                              <div>
+                                <div className="font-bold text-stone-800">{p.name}</div>
+                                <div className="text-stone-500">{formatPrice(p.price)} • {p.category}</div>
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => handleDelete(p.id)}
+                              className="bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1 rounded font-bold transition"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  /* Banner & Hero Customizer Tab */
+                  <form onSubmit={handleSaveBanner} className="space-y-4 bg-[#faf8f5] p-5 rounded-xl border border-stone-200">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Small Top Subtitle</label>
+                      <input 
+                        type="text" 
+                        value={bannerSubtitle} 
+                        onChange={e => setBannerSubtitle(e.target.value)}
+                        className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Main Banner Title</label>
+                      <input 
+                        type="text" 
+                        value={bannerTitle} 
+                        onChange={e => setBannerTitle(e.target.value)}
+                        className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">Banner Description Text</label>
+                      <textarea 
+                        value={bannerDesc} 
+                        onChange={e => setBannerDesc(e.target.value)}
+                        rows="2"
+                        className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                        Banner Background Image URL
+                      </label>
+                      <input 
+                        type="text" 
+                        placeholder="https://... (or choose a file below)"
+                        value={bannerMediaUrl.startsWith("data:") ? "" : bannerMediaUrl} 
+                        onChange={e => {
+                          setBannerMediaUrl(e.target.value);
+                          setBannerMediaType("image");
+                        }}
+                        className="w-full bg-white border border-stone-300 rounded-lg p-2.5 text-xs outline-none focus:border-[#99793d]" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-stone-700 mb-1">
+                        Or Upload Background Photo / Video Animation (from device)
+                      </label>
+                      <input 
+                        type="file" 
+                        accept="image/*,video/mp4,video/webm"
+                        onChange={handleBannerMediaUpload}
+                        className="w-full bg-white border border-dashed border-stone-300 rounded-lg p-3 text-xs" 
+                      />
+                    </div>
+
+                    <button 
+                      type="submit" 
+                      className="w-full bg-[#5a0017] hover:bg-[#78001f] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-widest transition shadow mt-3"
+                    >
+                      💾 Save & Update Banner
+                    </button>
+                  </form>
+                )}
               </div>
             )}
           </div>
@@ -497,6 +629,11 @@
       const [products, setProducts] = useState(() => {
         const saved = localStorage.getItem("lotus_products");
         return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
+      });
+
+      const [banner, setBanner] = useState(() => {
+        const saved = localStorage.getItem("lotus_banner");
+        return saved ? JSON.parse(saved) : DEFAULT_BANNER;
       });
 
       const [selectedCat, setSelectedCat] = useState("All");
@@ -516,12 +653,26 @@
 
       const filtered = useMemo(() => {
         return products.filter(p => {
-          const matchCat = selectedCat === "All" || p.category === selectedCat;
+          const matchCat = selectedCat === "All" || p.category.toLowerCase() === selectedCat.toLowerCase();
           const matchSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                               p.category.toLowerCase().includes(searchQuery.toLowerCase());
           return matchCat && matchSearch;
         });
       }, [selectedCat, searchQuery, products]);
+
+      // Category filter handler: switches category, returns from single product view, and scrolls directly to products
+      const handleSelectCategory = (catName) => {
+        setSelectedCat(catName);
+        if (activeProduct) {
+          setActiveProduct(null);
+        }
+        setTimeout(() => {
+          const el = document.getElementById('catalogue');
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 50);
+      };
 
       const openProduct = (prod) => {
         setActiveProduct(prod);
@@ -627,17 +778,14 @@
               </div>
             </div>
 
-            {/* Navigation Category Bar */}
+            {/* Navigation Category Bar - Click triggers smooth scroll to category */}
             <div className="bg-[#faf6ee] border-t border-b border-stone-200 py-2.5 px-4 overflow-x-auto">
               <div className="max-w-7xl mx-auto flex justify-center items-center gap-4 sm:gap-8 whitespace-nowrap text-xs font-semibold tracking-widest uppercase text-stone-700">
                 {CATEGORIES.map(c => (
                   <button 
                     key={c.name}
-                    onClick={() => {
-                      setSelectedCat(c.name);
-                      if (activeProduct) setActiveProduct(null);
-                    }}
-                    className={`transition-colors pb-1 border-b-2 ${selectedCat === c.name && !activeProduct ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent hover:text-[#99793d]'}`}
+                    onClick={() => handleSelectCategory(c.name)}
+                    className={`transition-all pb-1 border-b-2 cursor-pointer ${selectedCat === c.name && !activeProduct ? 'border-[#5a0017] text-[#5a0017] font-bold' : 'border-transparent text-stone-600 hover:text-[#99793d]'}`}
                   >
                     {c.name}
                   </button>
@@ -654,25 +802,36 @@
             />
           ) : (
             <main>
-              {/* 3. HERO BANNER WITH CONTINUOUS SMOOTH PAN/ZOOM ANIMATION */}
+              {/* 3. HERO BANNER WITH USER CUSTOM MEDIA (IMAGE / VIDEO) */}
               <section className="relative min-h-[480px] flex items-center justify-center text-center text-white px-4 overflow-hidden">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center animate-hero-bg"
-                  style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000')`
-                  }}
-                />
+                {banner.mediaType === "video" ? (
+                  <video 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline 
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={banner.mediaUrl}
+                  />
+                ) : (
+                  <div 
+                    className="absolute inset-0 bg-cover bg-center animate-hero-bg"
+                    style={{ backgroundImage: `url('${banner.mediaUrl}')` }}
+                  />
+                )}
+                
+                {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-[#120307]/75 via-[#340713]/70 to-[#0e0205]/85" />
 
                 <div className="relative z-10 max-w-3xl mx-auto py-16">
                   <span className="text-[#f7e6b5] text-xs sm:text-sm font-semibold tracking-[0.35em] uppercase block mb-3">
-                    Exquisite Craftsmanship & Bridal Splendour
+                    {banner.subtitle}
                   </span>
                   <h2 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold tracking-wide uppercase leading-tight mb-4 drop-shadow-lg">
-                    Royal 1 Gram Gold Jewellery
+                    {banner.title}
                   </h2>
                   <p className="italic text-stone-200 text-sm sm:text-base font-serif max-w-xl mx-auto mb-8 drop-shadow">
-                    Designed to make every bride and festive occasion shine with timeless Indian beauty.
+                    {banner.description}
                   </p>
                   <div>
                     <a 
@@ -698,7 +857,7 @@
                   {CATEGORIES.map(cat => (
                     <div 
                       key={cat.name}
-                      onClick={() => { setSelectedCat(cat.name); document.getElementById('catalogue').scrollIntoView({behavior: 'smooth'}); }}
+                      onClick={() => handleSelectCategory(cat.name)}
                       className="flex flex-col items-center cursor-pointer group"
                     >
                       <div className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 p-1 transition-all duration-300 ${selectedCat === cat.name ? 'border-[#5a0017] scale-105 shadow-md' : 'border-stone-300 group-hover:border-[#99793d]'}`}>
@@ -864,8 +1023,8 @@
                 <h4 className="text-xs font-bold text-white uppercase tracking-widest mb-4">Quick Links</h4>
                 <ul className="space-y-2 text-xs text-stone-400">
                   <li><button onClick={() => { setActiveProduct(null); setSelectedCat("All"); window.scrollTo({top:0, behavior:'smooth'}); }} className="hover:text-white">All Jewellery</button></li>
-                  <li><button onClick={() => { setActiveProduct(null); setSelectedCat("Bridal"); }} className="hover:text-white">Bridal Sets</button></li>
-                  <li><button onClick={() => { setActiveProduct(null); setSelectedCat("Earrings"); }} className="hover:text-white">Antique Jhumkas</button></li>
+                  <li><button onClick={() => handleSelectCategory("Bridal")} className="hover:text-white">Bridal Sets</button></li>
+                  <li><button onClick={() => handleSelectCategory("Earrings")} className="hover:text-white">Antique Jhumkas</button></li>
                   <li><a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="hover:text-white">Instagram Profile</a></li>
                 </ul>
               </div>
@@ -918,6 +1077,8 @@
             <OwnerManagerModal 
               products={products} 
               setProducts={setProducts} 
+              banner={banner}
+              setBanner={setBanner}
               onClose={() => setShowOwnerPortal(false)} 
             />
           )}
