@@ -28,7 +28,7 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useMemo, useEffect } = React;
+    const { useState, useMemo, useEffect, useRef } = React;
 
     // ==========================================
     // 1. STORE SETTINGS & CONTACT INFO
@@ -42,20 +42,22 @@
     const OWNER_PIN = "1111";
 
     // =========================================================================
-    // 2. DUAL BANNER CONFIGURATION (CHANGE DESKTOP & MOBILE LINKS HERE)
+    // 2. DUAL BANNER SLIDES (ADD AS MANY AS YOU WANT FOR MOBILE & LAPTOP)
     // =========================================================================
-    const DEFAULT_BANNER = {
-      // Desktop / Laptop Banner (Wide horizontal: 1920x600 px)
-      desktopUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000",
-      
-      // Mobile Banner (Square or 4:5: 1080x1080 px or 1080x1350 px)
-      mobileUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=1080",
-      
-      // Optional text overlay (Leave blank "" if your banner already has text)
-      subtitle: "Exquisite Craftsmanship & Bridal Splendour",
-      title: "Royal 1 Gram Gold Jewellery",
-      description: "Designed to make every bride shine with timeless Indian beauty."
-    };
+    const DEFAULT_BANNERS = [
+      {
+        id: 1,
+        // Desktop / Laptop: 1920x600 px
+        desktopUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000",
+        // Mobile Phone: 1080x1080 px or 1080x1350 px
+        mobileUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=1080"
+      },
+      {
+        id: 2,
+        desktopUrl: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=2000",
+        mobileUrl: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=1080"
+      }
+    ];
 
     // ==========================================
     // 3. PRODUCT CATALOGUE
@@ -133,6 +135,91 @@
 
     const formatPrice = (p) => "₹" + Number(p).toLocaleString("en-IN");
 
+    // --- CAROUSEL BANNER COMPONENT WITH NEXT / PREV BUTTONS ---
+    function BannerCarousel({ banners }) {
+      const [current, setCurrent] = useState(0);
+
+      useEffect(() => {
+        if (!banners || banners.length <= 1) return;
+        const timer = setInterval(() => {
+          setCurrent(prev => (prev + 1) % banners.length);
+        }, 5000);
+        return () => clearInterval(timer);
+      }, [banners]);
+
+      if (!banners || banners.length === 0) return null;
+
+      const nextSlide = () => setCurrent(prev => (prev + 1) % banners.length);
+      const prevSlide = () => setCurrent(prev => (prev - 1 + banners.length) % banners.length);
+
+      return (
+        <section className="relative overflow-hidden w-full select-none bg-stone-100">
+          {/* Banner Slides */}
+          <div className="w-full relative">
+            {banners.map((item, idx) => (
+              <div
+                key={item.id || idx}
+                className={`transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100 relative" : "opacity-0 absolute inset-0 pointer-events-none"}`}
+              >
+                {/* Mobile Banner: 1080x1080 / 1080x1350 */}
+                <div className="block sm:hidden w-full">
+                  <img 
+                    src={item.mobileUrl || item.desktopUrl} 
+                    alt="" 
+                    className="w-full h-auto object-cover block"
+                  />
+                </div>
+
+                {/* Laptop / Desktop Banner: 1920x600 */}
+                <div className="hidden sm:block w-full">
+                  <img 
+                    src={item.desktopUrl} 
+                    alt="" 
+                    className="w-full h-auto max-h-[560px] object-cover block"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Left Arrow (Prev) */}
+          {banners.length > 1 && (
+            <button
+              onClick={prevSlide}
+              aria-label="Previous Slide"
+              className="absolute left-2.5 sm:left-6 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/60 text-white w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20 text-lg sm:text-2xl shadow"
+            >
+              &#10094;
+            </button>
+          )}
+
+          {/* Right Arrow (Next) */}
+          {banners.length > 1 && (
+            <button
+              onClick={nextSlide}
+              aria-label="Next Slide"
+              className="absolute right-2.5 sm:right-6 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/60 text-white w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20 text-lg sm:text-2xl shadow"
+            >
+              &#10095;
+            </button>
+          )}
+
+          {/* Dot Indicators */}
+          {banners.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
+              {banners.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrent(i)}
+                  className={`h-2 rounded-full transition-all ${i === current ? "w-6 bg-[#99793d]" : "w-2 bg-white/70 hover:bg-white"}`}
+                />
+              ))}
+            </div>
+          )}
+        </section>
+      );
+    }
+
     // --- PRODUCT DETAIL VIEW ---
     function ProductDetailView({ product, onBack }) {
       const [isZoomed, setIsZoomed] = useState(false);
@@ -167,7 +254,7 @@
             >
               <img 
                 src={product.image} 
-                alt={product.name}
+                alt=""
                 className="w-full h-full object-cover select-none"
                 style={isZoomed ? {
                   transformOrigin: `${mousePos.x}% ${mousePos.y}%`,
@@ -240,8 +327,8 @@
       );
     }
 
-    // --- OWNER PORTAL (WITH DUAL BANNER UPLOADS) ---
-    function OwnerManagerModal({ products, setProducts, banner, setBanner, onClose }) {
+    // --- OWNER PORTAL (WITH MULTI-BANNER MANAGEMENT) ---
+    function OwnerManagerModal({ products, setProducts, banners, setBanners, onClose }) {
       const [isAuthenticated, setIsAuthenticated] = useState(false);
       const [enteredPin, setEnteredPin] = useState("");
       const [pinError, setPinError] = useState(false);
@@ -256,12 +343,9 @@
       const [description, setDescription] = useState("");
       const [imagePreview, setImagePreview] = useState("");
 
-      // Banner Form State
-      const [desktopBannerUrl, setDesktopBannerUrl] = useState(banner.desktopUrl || "");
-      const [mobileBannerUrl, setMobileBannerUrl] = useState(banner.mobileUrl || "");
-      const [bannerSubtitle, setBannerSubtitle] = useState(banner.subtitle || "");
-      const [bannerTitle, setBannerTitle] = useState(banner.title || "");
-      const [bannerDesc, setBannerDesc] = useState(banner.description || "");
+      // New Banner Slide State
+      const [newDeskUrl, setNewDeskUrl] = useState("");
+      const [newMobUrl, setNewMobUrl] = useState("");
 
       const handleLogin = (e) => {
         e.preventDefault();
@@ -282,36 +366,53 @@
         }
       };
 
-      const handleDesktopUpload = (e) => {
+      const handleDeskUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
-          reader.onloadend = () => setDesktopBannerUrl(reader.result);
+          reader.onloadend = () => setNewDeskUrl(reader.result);
           reader.readAsDataURL(file);
         }
       };
 
-      const handleMobileUpload = (e) => {
+      const handleMobUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
           const reader = new FileReader();
-          reader.onloadend = () => setMobileBannerUrl(reader.result);
+          reader.onloadend = () => setNewMobUrl(reader.result);
           reader.readAsDataURL(file);
         }
       };
 
-      const handleSaveBanner = (e) => {
+      const handleAddBanner = (e) => {
         e.preventDefault();
-        const updated = {
-          desktopUrl: desktopBannerUrl,
-          mobileUrl: mobileBannerUrl,
-          subtitle: bannerSubtitle,
-          title: bannerTitle,
-          description: bannerDesc
+        if (!newDeskUrl && !newMobUrl) {
+          alert("Please provide at least one banner image!");
+          return;
+        }
+        const newSlide = {
+          id: Date.now(),
+          desktopUrl: newDeskUrl || newMobUrl,
+          mobileUrl: newMobUrl || newDeskUrl
         };
-        setBanner(updated);
-        localStorage.setItem("lotus_banner", JSON.stringify(updated));
-        alert("✨ Desktop & Mobile banners updated successfully!");
+        const updated = [...banners, newSlide];
+        setBanners(updated);
+        localStorage.setItem("lotus_banners", JSON.stringify(updated));
+        setNewDeskUrl("");
+        setNewMobUrl("");
+        alert("✨ New banner slide added!");
+      };
+
+      const handleDeleteBanner = (id) => {
+        if (banners.length <= 1) {
+          alert("Keep at least 1 banner slide.");
+          return;
+        }
+        if (confirm("Remove this banner slide?")) {
+          const updated = banners.filter(b => b.id !== id);
+          setBanners(updated);
+          localStorage.setItem("lotus_banners", JSON.stringify(updated));
+        }
       };
 
       const handleAddProduct = (e) => {
@@ -344,7 +445,7 @@
         alert("✨ New jewellery published successfully!");
       };
 
-      const handleDelete = (id) => {
+      const handleDeleteProduct = (id) => {
         if (confirm("Remove this item?")) {
           const updated = products.filter(p => p.id !== id);
           setProducts(updated);
@@ -394,7 +495,7 @@
                     onClick={() => setActiveTab("banner")}
                     className={`pb-2 border-b-2 ${activeTab === 'banner' ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent text-stone-500'}`}
                   >
-                    🎬 Dual Banners (Laptop & Mobile)
+                    🎬 Banner Slides ({banners.length})
                   </button>
                 </div>
 
@@ -461,7 +562,7 @@
                               <img src={p.image} className="w-8 h-8 object-cover rounded shrink-0" />
                               <span className="truncate">{p.name}</span>
                             </div>
-                            <button onClick={() => handleDelete(p.id)} className="text-red-600 font-bold ml-2">
+                            <button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 font-bold ml-2">
                               Delete
                             </button>
                           </div>
@@ -470,74 +571,56 @@
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleSaveBanner} className="space-y-4 bg-[#faf8f5] p-4 rounded-xl border border-stone-200 text-xs">
-                    
-                    {/* Laptop Banner Setting */}
-                    <div className="p-3 bg-white rounded-lg border border-stone-200">
-                      <h4 className="font-bold text-stone-800 uppercase mb-1">1. Laptop / Desktop Banner (Wide: 1920×600 px)</h4>
-                      <p className="text-[10px] text-stone-500 mb-2">Displayed on computers and large screens.</p>
-                      <input 
-                        type="text" 
-                        placeholder="Image URL (https://...)" 
-                        value={desktopBannerUrl.startsWith("data:") ? "" : desktopBannerUrl} 
-                        onChange={e => setDesktopBannerUrl(e.target.value)}
-                        className="w-full bg-stone-50 border rounded p-2 text-xs mb-2"
-                      />
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={handleDesktopUpload}
-                        className="w-full text-xs" 
-                      />
-                    </div>
-
-                    {/* Mobile Banner Setting */}
-                    <div className="p-3 bg-white rounded-lg border border-stone-200">
-                      <h4 className="font-bold text-stone-800 uppercase mb-1">2. Mobile Phone Banner (Square/Portrait: 1080×1080 or 1080×1350 px)</h4>
-                      <p className="text-[10px] text-stone-500 mb-2">Displayed on mobile screens without side-cropping.</p>
-                      <input 
-                        type="text" 
-                        placeholder="Image URL (https://...)" 
-                        value={mobileBannerUrl.startsWith("data:") ? "" : mobileBannerUrl} 
-                        onChange={e => setMobileBannerUrl(e.target.value)}
-                        className="w-full bg-stone-50 border rounded p-2 text-xs mb-2"
-                      />
-                      <input 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={handleMobileUpload}
-                        className="w-full text-xs" 
-                      />
-                    </div>
-
-                    {/* Overlay Text Customization */}
-                    <div className="p-3 bg-white rounded-lg border border-stone-200 space-y-2">
-                      <h4 className="font-bold text-stone-800 uppercase mb-1">3. Optional Text Overlay</h4>
-                      <p className="text-[10px] text-stone-500">Leave blank if your banner graphics already have words on them.</p>
+                  <div>
+                    {/* Add New Slide Form */}
+                    <form onSubmit={handleAddBanner} className="space-y-3 bg-[#faf8f5] p-4 rounded-xl border border-stone-200 text-xs mb-4">
+                      <h4 className="font-bold text-[#5a0017] uppercase">Add New Banner Slide</h4>
                       <div>
-                        <label className="text-[10px] font-bold text-stone-600 block">Main Title</label>
+                        <label className="font-bold text-stone-700 block mb-1">Laptop / Desktop Banner (1920×600 px)</label>
                         <input 
                           type="text" 
-                          value={bannerTitle} 
-                          onChange={e => setBannerTitle(e.target.value)}
-                          className="w-full bg-stone-50 border rounded p-2 text-xs" 
+                          placeholder="Image URL (https://...)" 
+                          value={newDeskUrl.startsWith("data:") ? "" : newDeskUrl} 
+                          onChange={e => setNewDeskUrl(e.target.value)}
+                          className="w-full bg-white border rounded p-2 text-xs mb-1"
                         />
+                        <input type="file" accept="image/*" onChange={handleDeskUpload} className="w-full text-xs" />
                       </div>
+
                       <div>
-                        <label className="text-[10px] font-bold text-stone-600 block">Subtitle</label>
+                        <label className="font-bold text-stone-700 block mb-1">Mobile Phone Banner (1080×1080 or 1080×1350 px)</label>
                         <input 
                           type="text" 
-                          value={bannerSubtitle} 
-                          onChange={e => setBannerSubtitle(e.target.value)}
-                          className="w-full bg-stone-50 border rounded p-2 text-xs" 
+                          placeholder="Image URL (https://...)" 
+                          value={newMobUrl.startsWith("data:") ? "" : newMobUrl} 
+                          onChange={e => setNewMobUrl(e.target.value)}
+                          className="w-full bg-white border rounded p-2 text-xs mb-1"
                         />
+                        <input type="file" accept="image/*" onChange={handleMobUpload} className="w-full text-xs" />
                       </div>
-                    </div>
 
-                    <button type="submit" className="w-full bg-[#5a0017] text-white font-bold py-2.5 rounded text-xs uppercase tracking-wider">
-                      Save Both Banners
-                    </button>
-                  </form>
+                      <button type="submit" className="w-full bg-[#5a0017] text-white font-bold py-2 rounded text-xs uppercase tracking-wider">
+                        + Add Banner Slide
+                      </button>
+                    </form>
+
+                    {/* Manage Existing Slides */}
+                    <h4 className="text-xs font-bold uppercase mb-2">Existing Slides ({banners.length})</h4>
+                    <div className="space-y-2 max-h-56 overflow-y-auto">
+                      {banners.map((b, idx) => (
+                        <div key={b.id || idx} className="flex items-center justify-between p-2.5 bg-stone-50 border rounded text-xs">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-stone-500">#{idx + 1}</span>
+                            <img src={b.mobileUrl || b.desktopUrl} className="w-10 h-10 object-cover rounded border" />
+                            <span className="text-[11px] text-stone-600">Slide {idx + 1}</span>
+                          </div>
+                          <button onClick={() => handleDeleteBanner(b.id)} className="text-red-600 font-bold hover:underline">
+                            Delete
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -553,9 +636,9 @@
         return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
       });
 
-      const [banner, setBanner] = useState(() => {
-        const saved = localStorage.getItem("lotus_banner");
-        return saved ? JSON.parse(saved) : DEFAULT_BANNER;
+      const [banners, setBanners] = useState(() => {
+        const saved = localStorage.getItem("lotus_banners");
+        return saved ? JSON.parse(saved) : DEFAULT_BANNERS;
       });
 
       const [selectedCat, setSelectedCat] = useState("All");
@@ -663,74 +746,8 @@
             />
           ) : (
             <main>
-              {/* 3. DUAL BANNER SECTION (KUSHAL STYLE: SEPARATE MOBILE & LAPTOP) */}
-              <section className="relative overflow-hidden w-full">
-                
-                {/* A. MOBILE BANNER: Visible on phones (sm:hidden) */}
-                <div className="block sm:hidden w-full relative">
-                  <img 
-                    src={banner.mobileUrl || banner.desktopUrl} 
-                    alt="Lotus Jewellery Mobile Collection"
-                    className="w-full h-auto object-cover block"
-                  />
-                  {/* Subtle dark gradient overlay only if title text is present */}
-                  {banner.title && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-5 text-center text-white">
-                      {banner.subtitle && (
-                        <span className="text-[#f7e6b5] text-[10px] font-semibold tracking-widest uppercase block mb-1">
-                          {banner.subtitle}
-                        </span>
-                      )}
-                      <h2 className="text-xl font-serif font-bold tracking-wide uppercase leading-tight drop-shadow mb-1">
-                        {banner.title}
-                      </h2>
-                      <div className="mt-2">
-                        <a 
-                          href="#catalogue" 
-                          className="bg-[#99793d] text-white px-5 py-2 text-[10px] uppercase tracking-widest font-bold rounded shadow inline-block"
-                        >
-                          View Jewellery
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* B. LAPTOP / DESKTOP BANNER: Visible on tablets & laptops (hidden sm:block) */}
-                <div className="hidden sm:block w-full relative min-h-[460px] md:min-h-[520px] bg-stone-900">
-                  <img 
-                    src={banner.desktopUrl} 
-                    alt="Lotus Jewellery Desktop Collection"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  {banner.title && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent flex items-center px-12 lg:px-20 text-white">
-                      <div className="max-w-xl text-left">
-                        {banner.subtitle && (
-                          <span className="text-[#f7e6b5] text-xs font-semibold tracking-[0.3em] uppercase block mb-2">
-                            {banner.subtitle}
-                          </span>
-                        )}
-                        <h2 className="text-3xl md:text-5xl font-serif font-bold tracking-wide uppercase leading-tight mb-3 drop-shadow-md">
-                          {banner.title}
-                        </h2>
-                        {banner.description && (
-                          <p className="italic text-stone-200 text-sm font-serif mb-6 leading-relaxed">
-                            {banner.description}
-                          </p>
-                        )}
-                        <a 
-                          href="#catalogue" 
-                          className="bg-[#99793d] hover:bg-[#b58f4a] text-white px-7 py-3 text-xs uppercase tracking-widest font-bold rounded shadow-lg inline-block transition"
-                        >
-                          Explore Collection
-                        </a>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-              </section>
+              {/* 3. MULTI-BANNER SLIDER (NEXT/PREV) */}
+              <BannerCarousel banners={banners} />
 
               {/* 4. PRODUCT CATALOGUE SECTION */}
               <section id="catalogue" className="py-8 bg-white border-t border-stone-200">
@@ -753,7 +770,7 @@
                         <div className="relative aspect-square overflow-hidden bg-stone-100">
                           <img 
                             src={product.image} 
-                            alt={product.name} 
+                            alt="" 
                             className="w-full h-full object-cover"
                             loading="lazy"
                           />
@@ -823,8 +840,8 @@
             <OwnerManagerModal 
               products={products} 
               setProducts={setProducts} 
-              banner={banner}
-              setBanner={setBanner}
+              banners={banners}
+              setBanners={setBanners}
               onClose={() => setShowOwnerPortal(false)} 
             />
           )}
