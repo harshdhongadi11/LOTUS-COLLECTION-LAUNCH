@@ -17,6 +17,16 @@
     
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Luxury Image Render Enhancement: Crisp, rich, and high-contrast gold polish look */
+    .jewellery-img-render {
+      filter: contrast(1.05) brightness(1.02) saturate(1.08);
+      image-rendering: -webkit-optimize-contrast;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+    }
+    .group:hover .jewellery-img-render {
+      filter: contrast(1.08) brightness(1.04) saturate(1.12);
+    }
   </style>
 
   <!-- React & Babel -->
@@ -42,100 +52,218 @@
     const OWNER_PIN = "1111";
 
     // =========================================================================
-    // 2. DUAL BANNER SLIDES (ADD AS MANY AS YOU WANT FOR MOBILE & LAPTOP)
+    // 2. DUAL BANNER SLIDES (KUSHAL STYLE CAROUSEL)
     // =========================================================================
     const DEFAULT_BANNERS = [
       {
         id: 1,
-        // Desktop / Laptop: 1920x600 px
-        desktopUrl: "https://i.imgur.com/EFbOvJe.jpeg",
-        // Mobile Phone: 1080x1080 px or 1080x1350 px
-        mobileUrl: "https://i.imgur.com/ryfrLzy.jpeg"
+        desktopUrl: "LOTUS/WhatsApp Image 2026-10-03 at 5.56.14 PM.jpeg",
+        mobileUrl: "LOTUS/WhatsApp Image 2026-10-03 at 5.56.14 PM.jpeg"
       },
       {
         id: 2,
-        desktopUrl: "https://i.imgur.com/U6VmP9P.jpeg",
-        mobileUrl: "https://i.imgur.com/sM7zeu5.jpeg"
+        desktopUrl: "LOTUS/WhatsApp Image 2026-10-03 at 6.02.35 PM.jpeg",
+        mobileUrl: "LOTUS/WhatsApp Image 2026-10-03 at 6.02.35 PM.jpeg"
       }
     ];
 
-    // ==========================================
-    // 3. PRODUCT CATALOGUE
-    // ==========================================
+    // =========================================================================
+    // 3. YOUR PRODUCT CATALOGUE (YOUR REAL STORE IMAGES)
+    // =========================================================================
     const DEFAULT_PRODUCTS = [
       {
         id: 1,
-        name: "Royal Kundan Heritage Choker Set",
-        price: 45000,
-        originalPrice: 55000,
+        name: "Imperial Kundan Bridal Heritage Haar",
+        price: 24500,
+        originalPrice: 28500,
         category: "Bridal",
         tag: "Bestseller",
-        image: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=1200",
-        description: "Intricate Kundan and pearl craftsmanship plated in authentic 1 gram micro-gold finish. Comes with matching royal earrings."
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 5.56.14 PM.jpeg",
+        description: "Regal Kundan statement necklace finished in authentic 1-gram gold micro polish. Designed with hanging pearl drops."
       },
       {
         id: 2,
+        name: "Temple Antique Lakshmi Coin Choker",
+        price: 14500,
+        originalPrice: 17500,
+        category: "Necklaces",
+        tag: "Handcrafted",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 5.57.38 PM.jpeg",
+        description: "Classic South Indian antique temple choker crafted with intricate motifs and ruby-green simulant work."
+      },
+      {
+        id: 3,
+        name: "Royal Jadau Polki Bridal Long Necklace Set",
+        price: 32000,
+        originalPrice: 38000,
+        category: "Bridal",
+        tag: "Exclusive",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 5.58.30 PM.jpeg",
+        description: "Exquisite multi-row Polki work with handcrafted finishing, paired with matching royal statement hangings."
+      },
+      {
+        id: 4,
+        name: "Heritage Matte Gold Kasu Bangles (Pair)",
+        price: 4800,
+        originalPrice: 5900,
+        category: "Bangles",
+        tag: "Trending",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.02.35 PM.jpeg",
+        description: "Premium Lakshmi matte-finish bangles with durable screw lock for brides and festive celebrations."
+      },
+      {
+        id: 5,
+        name: "Royal Heritage Choker & Matching Earrings",
+        price: 18500,
+        originalPrice: 22000,
+        category: "Bridal",
+        tag: "New Arrival",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.04.25 PM.jpeg",
+        description: "Fine micro-plated gold choker adorned with emerald accents and matching royal earrings."
+      },
+      {
+        id: 6,
+        name: "Traditional South Indian Mango Mala",
+        price: 16800,
+        originalPrice: 19800,
+        category: "Necklaces",
+        tag: "Handcrafted",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.06.18 PM.jpeg",
+        description: "Authentic Manga Malai long chain featuring antique stone settings and micro gold polish."
+      },
+      {
+        id: 7,
         name: "Temple Antique Goddess Jhumkas",
         price: 3200,
         originalPrice: 4200,
         category: "Earrings",
-        tag: "Trending",
-        image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=1200",
-        description: "Classic South-Indian antique motif adorned with fine rubies and hanging pearl clusters."
+        tag: "Popular",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.08.36 PM.jpeg",
+        description: "Grand peacock and floral antique jhumkas with hanging pearl tassels and ruby details."
       },
       {
-        id: 3,
-        name: "Lakshmi Kasu Traditional Bangles (Pair)",
-        price: 4500,
-        originalPrice: 5500,
+        id: 8,
+        name: "Royal Kundan Peacock Designer Choker",
+        price: 21500,
+        originalPrice: 25000,
+        category: "Bridal",
+        tag: "Bestseller",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.10.02 PM.jpeg",
+        description: "High-radiance Kundan choker featuring peacock motifs and genuine 24k look gold plating."
+      },
+      {
+        id: 9,
+        name: "Classic Heritage Broad Kada Bangles",
+        price: 5400,
+        originalPrice: 6500,
         category: "Bangles",
-        tag: "Handcrafted",
-        image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=1200",
-        description: "A pair of divine Lakshmi coin bangles with premium matte finish gold plating."
-      },
-      {
-        id: 4,
-        name: "Emerald Glow American Diamond Necklace",
-        price: 8500,
-        originalPrice: 11000,
-        category: "Necklaces",
         tag: "New Arrival",
-        image: "https://images.unsplash.com/photo-1599643477839-a937a05ebf36?auto=format&fit=crop&q=80&w=1200",
-        description: "Modern high-radiance AD stones accented with regal emerald-cut simulants."
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.17.19 PM.jpeg",
+        description: "Heavy broad antique kadas with textured relief work and comfortable daily/festive wear lock."
       },
       {
-        id: 5,
-        name: "Maharani Bridal Long Haram",
-        price: 18500,
-        originalPrice: 22000,
+        id: 10,
+        name: "Maharani Grand Bridal Haar & Mathapatti Set",
+        price: 38500,
+        originalPrice: 45000,
         category: "Bridal",
         tag: "Exclusive",
-        image: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=1200",
-        description: "Grand bridal haar designed for weddings and special festive moments."
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.19.32 PM.jpeg",
+        description: "The complete bridal jewellery set designed for weddings, reception, and temple functions."
       },
       {
-        id: 6,
-        name: "Floral Cz Solitaire Cocktail Ring",
-        price: 1800,
-        originalPrice: 2400,
+        id: 11,
+        name: "Emerald Glow American Diamond Choker",
+        price: 12500,
+        originalPrice: 15500,
+        category: "Necklaces",
+        tag: "Trending",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.20.41 PM.jpeg",
+        description: "Radiant AD stones set against high-polish gold with rich emerald teardrop stimulants."
+      },
+      {
+        id: 12,
+        name: "Traditional Nakshi Artisan Long Haram",
+        price: 27500,
+        originalPrice: 32000,
+        category: "Bridal",
+        tag: "Handcrafted",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.25.13 PM.jpeg",
+        description: "Detailed Nakshi artistry depicting traditional temple deities and rich floral garlands."
+      },
+      {
+        id: 13,
+        name: "Kundan Chandbali Dangler Earrings",
+        price: 2800,
+        originalPrice: 3500,
         category: "Earrings",
         tag: "Popular",
-        image: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=1200",
-        description: "Rhodium-coated ring with brilliant micro-pave crystal setting."
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.28.00 PM.jpeg",
+        description: "Graceful crescent Chandbali earrings embellished with micro pearls and sparkling Kundan stones."
+      },
+      {
+        id: 14,
+        name: "Royal Rajputana Pearl Choker Set",
+        price: 19500,
+        originalPrice: 23000,
+        category: "Necklaces",
+        tag: "New Arrival",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.32.10 PM.jpeg",
+        description: "Handcrafted multi-strand seed pearl choker featuring central meenakari and gold medallion."
+      },
+      {
+        id: 15,
+        name: "Divine Floral Antique Kada (Single)",
+        price: 3600,
+        originalPrice: 4400,
+        category: "Bangles",
+        tag: "Trending",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.35.29 PM.jpeg",
+        description: "Antique gold plated kada bangle highlighted with micro-carved floral vine motifs."
+      },
+      {
+        id: 16,
+        name: "Grand South Indian Wedding Haar",
+        price: 34000,
+        originalPrice: 41000,
+        category: "Bridal",
+        tag: "Exclusive",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.39.37 PM.jpeg",
+        description: "Heavy wedding long haar featuring intricate gold work that mirrors real hallmarked gold ornaments."
+      },
+      {
+        id: 17,
+        name: "Guttapusalu Heritage Pearl Cluster Necklace",
+        price: 17500,
+        originalPrice: 21000,
+        category: "Necklaces",
+        tag: "Bestseller",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.43.04 PM.jpeg",
+        description: "Iconic Guttapusalu necklace with rich bunch of pearls and sparkling pink-green gemstones."
+      },
+      {
+        id: 18,
+        name: "Maharani Royal Bridal Deluxe Collection",
+        price: 42000,
+        originalPrice: 49000,
+        category: "Bridal",
+        tag: "Exclusive",
+        image: "LOTUS/WhatsApp Image 2026-10-03 at 6.45.35 PM.jpeg",
+        description: "Crown jewel of Lotus Collection. Unmatched grandeur and gold micro polish for the bride."
       }
     ];
 
     const CATEGORIES = [
-      { name: "All", img: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=400" },
-      { name: "Necklaces", img: "https://images.unsplash.com/photo-1599643477839-a937a05ebf36?auto=format&fit=crop&q=80&w=400" },
-      { name: "Earrings", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&q=80&w=400" },
-      { name: "Bangles", img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&q=80&w=400" },
-      { name: "Bridal", img: "https://images.unsplash.com/photo-1605100804763-247f67b2548e?auto=format&fit=crop&q=80&w=400" }
+      { name: "All", img: "LOTUS/WhatsApp Image 2026-10-03 at 5.56.14 PM.jpeg" },
+      { name: "Bridal", img: "LOTUS/WhatsApp Image 2026-10-03 at 5.58.30 PM.jpeg" },
+      { name: "Necklaces", img: "LOTUS/WhatsApp Image 2026-10-03 at 5.57.38 PM.jpeg" },
+      { name: "Bangles", img: "LOTUS/WhatsApp Image 2026-10-03 at 6.02.35 PM.jpeg" },
+      { name: "Earrings", img: "LOTUS/WhatsApp Image 2026-10-03 at 6.08.36 PM.jpeg" }
     ];
 
     const formatPrice = (p) => "₹" + Number(p).toLocaleString("en-IN");
 
-    // --- CAROUSEL BANNER COMPONENT WITH NEXT / PREV BUTTONS ---
+    // --- CAROUSEL BANNER COMPONENT ---
     function BannerCarousel({ banners }) {
       const [current, setCurrent] = useState(0);
 
@@ -143,7 +271,7 @@
         if (!banners || banners.length <= 1) return;
         const timer = setInterval(() => {
           setCurrent(prev => (prev + 1) % banners.length);
-        }, 5000);
+        }, 5500);
         return () => clearInterval(timer);
       }, [banners]);
 
@@ -153,58 +281,54 @@
       const prevSlide = () => setCurrent(prev => (prev - 1 + banners.length) % banners.length);
 
       return (
-        <section className="relative overflow-hidden w-full select-none bg-stone-100">
-          {/* Banner Slides */}
+        <section className="relative overflow-hidden w-full select-none bg-stone-900 border-b border-stone-200">
           <div className="w-full relative">
             {banners.map((item, idx) => (
               <div
                 key={item.id || idx}
                 className={`transition-opacity duration-700 ease-in-out ${idx === current ? "opacity-100 relative" : "opacity-0 absolute inset-0 pointer-events-none"}`}
               >
-                {/* Mobile Banner: 1080x1080 / 1080x1350 */}
+                {/* Mobile Screen Banner */}
                 <div className="block sm:hidden w-full">
                   <img 
                     src={item.mobileUrl || item.desktopUrl} 
-                    alt="" 
-                    className="w-full h-auto object-cover block"
+                    alt="Lotus Jewellery Collection" 
+                    className="w-full h-auto object-cover block jewellery-img-render"
                   />
                 </div>
 
-                {/* Laptop / Desktop Banner: 1920x600 */}
+                {/* Laptop / Desktop Screen Banner */}
                 <div className="hidden sm:block w-full">
                   <img 
                     src={item.desktopUrl} 
-                    alt="" 
-                    className="w-full h-auto max-h-[560px] object-cover block"
+                    alt="Lotus Jewellery Collection" 
+                    className="w-full h-auto max-h-[580px] object-cover block jewellery-img-render"
                   />
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Left Arrow (Prev) */}
           {banners.length > 1 && (
             <button
               onClick={prevSlide}
               aria-label="Previous Slide"
-              className="absolute left-2.5 sm:left-6 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/60 text-white w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20 text-lg sm:text-2xl shadow"
+              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-md z-20 text-lg sm:text-2xl shadow"
             >
               &#10094;
             </button>
           )}
 
-          {/* Right Arrow (Next) */}
           {banners.length > 1 && (
             <button
               onClick={nextSlide}
               aria-label="Next Slide"
-              className="absolute right-2.5 sm:right-6 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/60 text-white w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-sm z-20 text-lg sm:text-2xl shadow"
+              className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition backdrop-blur-md z-20 text-lg sm:text-2xl shadow"
             >
               &#10095;
             </button>
           )}
 
-          {/* Dot Indicators */}
           {banners.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20">
               {banners.map((_, i) => (
@@ -220,7 +344,7 @@
       );
     }
 
-    // --- PRODUCT DETAIL VIEW ---
+    // --- DETAILED PRODUCT VIEW (TAP TO ZOOM) ---
     function ProductDetailView({ product, onBack }) {
       const [isZoomed, setIsZoomed] = useState(false);
       const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
@@ -240,12 +364,12 @@
             onClick={onBack}
             className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-stone-700 hover:text-[#5a0017] mb-4 bg-white border border-stone-300 px-3.5 py-1.5 rounded-full shadow-sm"
           >
-            ← Back
+            ← Back to Catalogue
           </button>
 
           <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
             <div 
-              className="relative w-full aspect-square bg-[#faf8f5] overflow-hidden cursor-crosshair"
+              className="relative w-full aspect-square bg-[#faf8f5] overflow-hidden cursor-crosshair flex items-center justify-center"
               onClick={() => setIsZoomed(!isZoomed)}
               onMouseEnter={() => setIsZoomed(true)}
               onMouseLeave={() => setIsZoomed(false)}
@@ -254,11 +378,11 @@
             >
               <img 
                 src={product.image} 
-                alt=""
-                className="w-full h-full object-cover select-none"
+                alt={product.name}
+                className="w-full h-full object-contain select-none jewellery-img-render"
                 style={isZoomed ? {
                   transformOrigin: `${mousePos.x}% ${mousePos.y}%`,
-                  transform: 'scale(2.2)',
+                  transform: 'scale(2.3)',
                   transition: 'transform 0.08s ease-out'
                 } : {
                   transform: 'scale(1)',
@@ -273,7 +397,7 @@
               )}
 
               <div className="absolute bottom-2.5 right-2.5 bg-black/65 backdrop-blur-sm text-white text-[10px] px-2.5 py-1 rounded-full pointer-events-none">
-                {isZoomed ? "Tap to unzoom" : "🔍 Tap to zoom"}
+                {isZoomed ? "Tap to unzoom" : "🔍 Tap / Hover to zoom"}
               </div>
             </div>
 
@@ -290,7 +414,7 @@
                     <span className="text-xs text-stone-400 line-through">{formatPrice(product.originalPrice)}</span>
                   )}
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded ml-auto">
-                    In Stock
+                    In Stock at Shahpur Store
                   </span>
                 </div>
 
@@ -299,9 +423,9 @@
                 </p>
 
                 <div className="mt-4 space-y-1.5 text-[11px] text-stone-600 bg-[#faf8f5] p-3 rounded-lg border border-stone-100">
-                  <div>✓ 1-Gram Long Lasting Micro Gold Polish</div>
-                  <div>✓ Available in Shahpur Store, Belgaum</div>
-                  <div>✓ Free secure packaging & video verification</div>
+                  <div>✓ 1-Gram Long Lasting Micro Gold Polish Finish</div>
+                  <div>✓ Handcrafted artisan detailing & stone setting</div>
+                  <div>✓ Free secure packaging & video verification before dispatch</div>
                 </div>
               </div>
 
@@ -310,15 +434,18 @@
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20buying%20*${encodeURIComponent(product.name)}*%20(${formatPrice(product.price)}).`}
                   target="_blank"
                   rel="noreferrer"
-                  className="w-full bg-[#25D366] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 shadow"
+                  className="w-full bg-[#25D366] hover:bg-[#1faa53] text-white py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 shadow transition"
                 >
-                  <span>Chat on WhatsApp</span>
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                  </svg>
+                  <span>Chat & Buy on WhatsApp</span>
                 </a>
                 <a 
                   href="tel:7996957565"
-                  className="w-full bg-stone-100 text-stone-800 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest text-center"
+                  className="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest text-center transition"
                 >
-                  Call +91 7996957565
+                  Call Store Directly (+91 7996957565)
                 </a>
               </div>
             </div>
@@ -327,7 +454,7 @@
       );
     }
 
-    // --- OWNER PORTAL (WITH MULTI-BANNER MANAGEMENT) ---
+    // --- OWNER MANAGER MODAL ---
     function OwnerManagerModal({ products, setProducts, banners, setBanners, onClose }) {
       const [isAuthenticated, setIsAuthenticated] = useState(false);
       const [enteredPin, setEnteredPin] = useState("");
@@ -338,12 +465,12 @@
       const [name, setName] = useState("");
       const [price, setPrice] = useState("");
       const [originalPrice, setOriginalPrice] = useState("");
-      const [category, setCategory] = useState("Necklaces");
+      const [category, setCategory] = useState("Bridal");
       const [tag, setTag] = useState("New Arrival");
       const [description, setDescription] = useState("");
       const [imagePreview, setImagePreview] = useState("");
 
-      // New Banner Slide State
+      // Banner Form State
       const [newDeskUrl, setNewDeskUrl] = useState("");
       const [newMobUrl, setNewMobUrl] = useState("");
 
@@ -489,7 +616,7 @@
                     onClick={() => setActiveTab("products")}
                     className={`pb-2 border-b-2 ${activeTab === 'products' ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent text-stone-500'}`}
                   >
-                    💎 Products
+                    💎 Products ({products.length})
                   </button>
                   <button 
                     onClick={() => setActiveTab("banner")}
@@ -509,7 +636,7 @@
                           value={name} 
                           onChange={e => setName(e.target.value)}
                           className="w-full bg-white border rounded p-2 text-xs" 
-                          placeholder="e.g. Temple Gold Necklace"
+                          placeholder="e.g. Royal Kundan Haar"
                           required
                         />
                       </div>
@@ -531,10 +658,10 @@
                             onChange={e => setCategory(e.target.value)}
                             className="w-full bg-white border rounded p-2 text-xs"
                           >
-                            <option value="Necklaces">Necklaces</option>
-                            <option value="Earrings">Earrings</option>
-                            <option value="Bangles">Bangles</option>
                             <option value="Bridal">Bridal</option>
+                            <option value="Necklaces">Necklaces</option>
+                            <option value="Bangles">Bangles</option>
+                            <option value="Earrings">Earrings</option>
                           </select>
                         </div>
                       </div>
@@ -555,12 +682,12 @@
 
                     <div className="mt-4">
                       <h4 className="text-xs font-bold uppercase mb-2">Live Items ({products.length})</h4>
-                      <div className="max-h-48 overflow-y-auto space-y-1.5">
+                      <div className="max-h-52 overflow-y-auto space-y-1.5">
                         {products.map(p => (
                           <div key={p.id} className="flex items-center justify-between bg-stone-50 border p-2 rounded text-xs">
                             <div className="flex items-center gap-2 truncate">
-                              <img src={p.image} className="w-8 h-8 object-cover rounded shrink-0" />
-                              <span className="truncate">{p.name}</span>
+                              <img src={p.image} className="w-8 h-8 object-cover rounded shrink-0 jewellery-img-render" />
+                              <span className="truncate">{p.name} - {formatPrice(p.price)}</span>
                             </div>
                             <button onClick={() => handleDeleteProduct(p.id)} className="text-red-600 font-bold ml-2">
                               Delete
@@ -572,14 +699,13 @@
                   </div>
                 ) : (
                   <div>
-                    {/* Add New Slide Form */}
                     <form onSubmit={handleAddBanner} className="space-y-3 bg-[#faf8f5] p-4 rounded-xl border border-stone-200 text-xs mb-4">
                       <h4 className="font-bold text-[#5a0017] uppercase">Add New Banner Slide</h4>
                       <div>
                         <label className="font-bold text-stone-700 block mb-1">Laptop / Desktop Banner (1920×600 px)</label>
                         <input 
                           type="text" 
-                          placeholder="Image URL (https://...)" 
+                          placeholder="Image URL or local file path" 
                           value={newDeskUrl.startsWith("data:") ? "" : newDeskUrl} 
                           onChange={e => setNewDeskUrl(e.target.value)}
                           className="w-full bg-white border rounded p-2 text-xs mb-1"
@@ -588,10 +714,10 @@
                       </div>
 
                       <div>
-                        <label className="font-bold text-stone-700 block mb-1">Mobile Phone Banner (1080×1080 or 1080×1350 px)</label>
+                        <label className="font-bold text-stone-700 block mb-1">Mobile Banner (1080×1080 or 1080×1350 px)</label>
                         <input 
                           type="text" 
-                          placeholder="Image URL (https://...)" 
+                          placeholder="Image URL or local file path" 
                           value={newMobUrl.startsWith("data:") ? "" : newMobUrl} 
                           onChange={e => setNewMobUrl(e.target.value)}
                           className="w-full bg-white border rounded p-2 text-xs mb-1"
@@ -604,14 +730,13 @@
                       </button>
                     </form>
 
-                    {/* Manage Existing Slides */}
                     <h4 className="text-xs font-bold uppercase mb-2">Existing Slides ({banners.length})</h4>
                     <div className="space-y-2 max-h-56 overflow-y-auto">
                       {banners.map((b, idx) => (
                         <div key={b.id || idx} className="flex items-center justify-between p-2.5 bg-stone-50 border rounded text-xs">
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-stone-500">#{idx + 1}</span>
-                            <img src={b.mobileUrl || b.desktopUrl} className="w-10 h-10 object-cover rounded border" />
+                            <img src={b.mobileUrl || b.desktopUrl} className="w-10 h-10 object-cover rounded border jewellery-img-render" />
                             <span className="text-[11px] text-stone-600">Slide {idx + 1}</span>
                           </div>
                           <button onClick={() => handleDeleteBanner(b.id)} className="text-red-600 font-bold hover:underline">
@@ -671,13 +796,13 @@
       return (
         <div className="min-h-screen flex flex-col">
           
-          {/* 1. TOP ANNOUNCEMENT BAR */}
+          {/* Top Announcement Bar */}
           <div className="bg-[#5a0017] text-[#f7e6b5] text-[10px] sm:text-xs py-1.5 px-3 text-center tracking-wider flex justify-between items-center">
-            <span className="truncate">✨ 1 Gram Gold & Bridal Jewellery</span>
-            <a href="tel:7996957565" className="font-semibold underline ml-2 shrink-0">Call: 7996957565</a>
+            <span className="truncate">✨ Lotus Collection | Luxury 1 Gram Gold & Bridal Jewellery</span>
+            <a href="tel:7996957565" className="font-semibold underline ml-2 shrink-0">Direct: 7996957565</a>
           </div>
 
-          {/* 2. MOBILE CLEAN HEADER */}
+          {/* Header */}
           <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200">
             <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between">
               
@@ -701,7 +826,7 @@
                   href={INSTAGRAM_URL} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white p-2 rounded-full shadow-sm hover:opacity-90 flex items-center justify-center"
+                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 text-white p-2 rounded-full shadow-sm hover:opacity-90 flex items-center justify-center transition"
                   title="Instagram"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -713,7 +838,7 @@
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20your%20jewellery.`}
                   target="_blank" 
                   rel="noreferrer"
-                  className="bg-[#25D366] text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm"
+                  className="bg-[#25D366] hover:bg-[#1faa53] text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm transition"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
@@ -723,13 +848,14 @@
               </div>
             </div>
 
+            {/* Category Filter */}
             <div className="bg-[#faf6ee] border-t border-b border-stone-200 py-2 px-3 overflow-x-auto no-scrollbar">
-              <div className="flex justify-start sm:justify-center items-center gap-5 whitespace-nowrap text-xs font-semibold tracking-wider uppercase text-stone-700">
+              <div className="flex justify-start sm:justify-center items-center gap-6 whitespace-nowrap text-xs font-semibold tracking-wider uppercase text-stone-700">
                 {CATEGORIES.map(c => (
                   <button 
                     key={c.name}
                     onClick={() => handleSelectCategory(c.name)}
-                    className={`transition pb-0.5 border-b-2 ${selectedCat === c.name && !activeProduct ? 'border-[#5a0017] text-[#5a0017] font-bold' : 'border-transparent text-stone-600'}`}
+                    className={`transition pb-0.5 border-b-2 ${selectedCat === c.name && !activeProduct ? 'border-[#5a0017] text-[#5a0017] font-bold' : 'border-transparent text-stone-600 hover:text-[#99793d]'}`}
                   >
                     {c.name}
                   </button>
@@ -738,7 +864,7 @@
             </div>
           </header>
 
-          {/* DEDICATED PRODUCT VIEW OR HOME CATALOGUE */}
+          {/* Body Section */}
           {activeProduct ? (
             <ProductDetailView 
               product={activeProduct} 
@@ -746,54 +872,64 @@
             />
           ) : (
             <main>
-              {/* 3. MULTI-BANNER SLIDER (NEXT/PREV) */}
+              {/* Dual Carousel Slider */}
               <BannerCarousel banners={banners} />
 
-              {/* 4. PRODUCT CATALOGUE SECTION */}
+              {/* Catalogue Grid */}
               <section id="catalogue" className="py-8 bg-white border-t border-stone-200">
                 <div className="max-w-6xl mx-auto px-3 sm:px-6">
                   
-                  <div className="mb-5">
-                    <h3 className="text-lg sm:text-xl font-serif text-[#5a0017] font-bold uppercase tracking-wider">
-                      {selectedCat === "All" ? "Our Jewellery Collection" : `${selectedCat} Collection`}
-                    </h3>
-                    <p className="text-[11px] text-stone-500">Tap any picture to open details & zoom</p>
+                  <div className="mb-6 flex justify-between items-end border-b border-stone-200 pb-3">
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-serif text-[#5a0017] font-bold uppercase tracking-wider">
+                        {selectedCat === "All" ? "Royal 1 Gram Gold Collection" : `${selectedCat} Jewellery`}
+                      </h2>
+                      <p className="text-[11px] text-stone-500 mt-0.5">Showing {filtered.length} designs available in Shahpur store • Tap any piece to zoom</p>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
+                  {/* 2-Column Responsive Layout */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3.5 sm:gap-6">
                     {filtered.map(product => (
                       <div 
                         key={product.id} 
                         onClick={() => { setActiveProduct(product); window.scrollTo({top: 0, behavior: 'smooth'}); }}
-                        className="bg-[#faf8f5] border border-stone-200 rounded-lg overflow-hidden flex flex-col cursor-pointer active:scale-95 transition-transform"
+                        className="group bg-[#faf8f5] border border-stone-200 rounded-xl overflow-hidden flex flex-col cursor-pointer active:scale-95 transition shadow-sm hover:shadow-md"
                       >
-                        <div className="relative aspect-square overflow-hidden bg-stone-100">
+                        <div className="relative aspect-square overflow-hidden bg-stone-100 flex items-center justify-center p-1">
                           <img 
                             src={product.image} 
-                            alt="" 
-                            className="w-full h-full object-cover"
+                            alt={product.name} 
+                            className="w-full h-full object-contain jewellery-img-render group-hover:scale-105"
                             loading="lazy"
                           />
                           {product.tag && (
-                            <span className="absolute top-2 left-2 bg-[#5a0017] text-white text-[9px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded shadow">
+                            <span className="absolute top-2 left-2 bg-[#5a0017] text-white text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded shadow">
                               {product.tag}
                             </span>
                           )}
                         </div>
 
-                        <div className="p-2.5 sm:p-4 flex-1 flex flex-col justify-between">
+                        <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                           <div>
                             <span className="text-[9px] font-bold uppercase tracking-wider text-[#99793d] block">{product.category}</span>
-                            <h4 className="font-serif font-bold text-stone-900 text-xs sm:text-sm mt-0.5 line-clamp-1">
+                            <h3 className="font-serif font-bold text-stone-900 text-xs sm:text-sm mt-0.5 line-clamp-1 group-hover:text-[#5a0017] transition">
                               {product.name}
-                            </h4>
+                            </h3>
                           </div>
 
-                          <div className="mt-2.5 pt-2 border-t border-stone-200 flex items-center justify-between">
-                            <div className="text-sm sm:text-base font-bold text-[#5a0017]">
-                              {formatPrice(product.price)}
+                          <div className="mt-3 pt-2.5 border-t border-stone-200 flex items-center justify-between">
+                            <div>
+                              <div className="text-sm sm:text-base font-bold text-[#5a0017]">
+                                {formatPrice(product.price)}
+                              </div>
+                              {product.originalPrice && (
+                                <div className="text-[10px] text-stone-400 line-through">
+                                  {formatPrice(product.originalPrice)}
+                                </div>
+                              )}
                             </div>
-                            <span className="text-[10px] font-bold text-stone-500 uppercase">
+                            <span className="text-[10px] font-bold text-[#99793d] group-hover:underline uppercase">
                               View →
                             </span>
                           </div>
@@ -806,13 +942,13 @@
             </main>
           )}
 
-          {/* 5. FOOTER */}
+          {/* Footer */}
           <footer className="bg-[#1c1917] text-stone-300 py-8 border-t-2 border-[#99793d] mt-auto">
             <div className="max-w-6xl mx-auto px-4 text-center text-xs space-y-4">
               <div>
                 <h4 className="font-serif text-[#f7e6b5] font-bold text-sm tracking-widest uppercase">Lotus Collection Jewellers</h4>
                 <p className="text-stone-400 text-[11px] mt-1">{STORE_ADDRESS}</p>
-                <p className="text-[#99793d] text-[11px] mt-0.5">Direct: +91 7996957565 / +91 7996953111</p>
+                <p className="text-[#99793d] text-[11px] mt-0.5">Phone: +91 7996957565 / +91 7996953111</p>
               </div>
 
               <div className="pt-2">
@@ -820,14 +956,14 @@
                   href={GOOGLE_MAPS_LINK} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="inline-block bg-[#99793d] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-1.5 rounded"
+                  className="inline-block bg-[#99793d] hover:bg-[#b58f4a] text-white text-[11px] font-bold uppercase tracking-wider px-4 py-1.5 rounded transition"
                 >
-                  📍 Open in Google Maps
+                  📍 Open Store in Google Maps
                 </a>
               </div>
 
               <div className="pt-4 border-t border-stone-800 flex justify-between items-center text-[10px] text-stone-500">
-                <span>© {new Date().getFullYear()} Lotus Collection</span>
+                <span>© {new Date().getFullYear()} Lotus Collection Jewellers</span>
                 <button onClick={() => setShowOwnerPortal(true)} className="underline hover:text-stone-300">
                   Owner Portal
                 </button>
