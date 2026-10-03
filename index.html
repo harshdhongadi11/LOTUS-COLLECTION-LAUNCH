@@ -15,15 +15,6 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #faf8f5; color: #1c1917; }
     h1, h2, h3, h4, .font-serif { font-family: 'Cinzel', serif; }
     
-    @keyframes heroPanZoom {
-      0% { transform: scale(1) translate(0, 0); }
-      50% { transform: scale(1.08) translate(-1%, -1%); }
-      100% { transform: scale(1) translate(0, 0); }
-    }
-    .animate-hero-bg {
-      animation: heroPanZoom 20s ease-in-out infinite alternate;
-    }
-    /* Hide scrollbars on category strip for clean mobile view */
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
@@ -50,19 +41,24 @@
     const GOOGLE_MAPS_LINK = "https://www.google.com/maps/place/Lotus+Collection/@15.8445021,74.5168667,17z/data=!3m1!4b1!4m6!3m5!1s0x3bbf67003239eb5b:0xc6dcf1fa76c30e8a!8m2!3d15.8445021!4d74.5168667!16s%2Fg%2F11wtpd4ld2?entry=ttu";
     const OWNER_PIN = "1111";
 
-    // ==========================================
-    // 2. HERO BANNER SETTINGS (EDIT HERE)
-    // ==========================================
+    // =========================================================================
+    // 2. DUAL BANNER CONFIGURATION (CHANGE DESKTOP & MOBILE LINKS HERE)
+    // =========================================================================
     const DEFAULT_BANNER = {
+      // Desktop / Laptop Banner (Wide horizontal: 1920x600 px)
+      desktopUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=2000",
+      
+      // Mobile Banner (Square or 4:5: 1080x1080 px or 1080x1350 px)
+      mobileUrl: "https://images.unsplash.com/photo-1599643478524-fb66f7220023?auto=format&fit=crop&q=80&w=1080",
+      
+      // Optional text overlay (Leave blank "" if your banner already has text)
       subtitle: "Exquisite Craftsmanship & Bridal Splendour",
       title: "Royal 1 Gram Gold Jewellery",
-      description: "Designed to make every bride and festive occasion shine with timeless Indian beauty.",
-      mediaType: "image", // "image" or "video"
-      mediaUrl: "https://i.imgur.com/EFbOvJe.jpeg"
+      description: "Designed to make every bride shine with timeless Indian beauty."
     };
 
     // ==========================================
-    // 3. PRODUCT CATALOGUE (ADD / EDIT ITEMS HERE)
+    // 3. PRODUCT CATALOGUE
     // ==========================================
     const DEFAULT_PRODUCTS = [
       {
@@ -137,7 +133,7 @@
 
     const formatPrice = (p) => "₹" + Number(p).toLocaleString("en-IN");
 
-    // --- DEDICATED MOBILE-READY PRODUCT DETAIL VIEW ---
+    // --- PRODUCT DETAIL VIEW ---
     function ProductDetailView({ product, onBack }) {
       const [isZoomed, setIsZoomed] = useState(false);
       const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
@@ -161,7 +157,6 @@
           </button>
 
           <div className="bg-white rounded-xl border border-stone-200 overflow-hidden shadow-sm">
-            {/* Image Box with Tap / Hover Zoom */}
             <div 
               className="relative w-full aspect-square bg-[#faf8f5] overflow-hidden cursor-crosshair"
               onClick={() => setIsZoomed(!isZoomed)}
@@ -195,7 +190,6 @@
               </div>
             </div>
 
-            {/* Details */}
             <div className="p-4 sm:p-6 flex flex-col justify-between">
               <div>
                 <span className="text-[10px] uppercase tracking-widest text-[#99793d] font-bold block">{product.category}</span>
@@ -224,7 +218,6 @@
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-6 pt-3 border-t border-stone-200 flex flex-col gap-2.5">
                 <a 
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20buying%20*${encodeURIComponent(product.name)}*%20(${formatPrice(product.price)}).`}
@@ -247,13 +240,14 @@
       );
     }
 
-    // --- OWNER PORTAL ---
+    // --- OWNER PORTAL (WITH DUAL BANNER UPLOADS) ---
     function OwnerManagerModal({ products, setProducts, banner, setBanner, onClose }) {
       const [isAuthenticated, setIsAuthenticated] = useState(false);
       const [enteredPin, setEnteredPin] = useState("");
       const [pinError, setPinError] = useState(false);
       const [activeTab, setActiveTab] = useState("products");
 
+      // Product Form State
       const [name, setName] = useState("");
       const [price, setPrice] = useState("");
       const [originalPrice, setOriginalPrice] = useState("");
@@ -262,11 +256,12 @@
       const [description, setDescription] = useState("");
       const [imagePreview, setImagePreview] = useState("");
 
-      const [bannerSubtitle, setBannerSubtitle] = useState(banner.subtitle);
-      const [bannerTitle, setBannerTitle] = useState(banner.title);
-      const [bannerDesc, setBannerDesc] = useState(banner.description);
-      const [bannerMediaUrl, setBannerMediaUrl] = useState(banner.mediaUrl);
-      const [bannerMediaType, setBannerMediaType] = useState(banner.mediaType);
+      // Banner Form State
+      const [desktopBannerUrl, setDesktopBannerUrl] = useState(banner.desktopUrl || "");
+      const [mobileBannerUrl, setMobileBannerUrl] = useState(banner.mobileUrl || "");
+      const [bannerSubtitle, setBannerSubtitle] = useState(banner.subtitle || "");
+      const [bannerTitle, setBannerTitle] = useState(banner.title || "");
+      const [bannerDesc, setBannerDesc] = useState(banner.description || "");
 
       const handleLogin = (e) => {
         e.preventDefault();
@@ -287,15 +282,20 @@
         }
       };
 
-      const handleBannerMediaUpload = (e) => {
+      const handleDesktopUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-          const isVideo = file.type.startsWith("video");
           const reader = new FileReader();
-          reader.onloadend = () => {
-            setBannerMediaUrl(reader.result);
-            setBannerMediaType(isVideo ? "video" : "image");
-          };
+          reader.onloadend = () => setDesktopBannerUrl(reader.result);
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleMobileUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => setMobileBannerUrl(reader.result);
           reader.readAsDataURL(file);
         }
       };
@@ -303,15 +303,15 @@
       const handleSaveBanner = (e) => {
         e.preventDefault();
         const updated = {
+          desktopUrl: desktopBannerUrl,
+          mobileUrl: mobileBannerUrl,
           subtitle: bannerSubtitle,
           title: bannerTitle,
-          description: bannerDesc,
-          mediaType: bannerMediaType,
-          mediaUrl: bannerMediaUrl
+          description: bannerDesc
         };
         setBanner(updated);
         localStorage.setItem("lotus_banner", JSON.stringify(updated));
-        alert("✨ Banner details updated successfully!");
+        alert("✨ Desktop & Mobile banners updated successfully!");
       };
 
       const handleAddProduct = (e) => {
@@ -394,7 +394,7 @@
                     onClick={() => setActiveTab("banner")}
                     className={`pb-2 border-b-2 ${activeTab === 'banner' ? 'border-[#5a0017] text-[#5a0017]' : 'border-transparent text-stone-500'}`}
                   >
-                    🎬 Banner
+                    🎬 Dual Banners (Laptop & Mobile)
                   </button>
                 </div>
 
@@ -470,41 +470,72 @@
                     </div>
                   </div>
                 ) : (
-                  <form onSubmit={handleSaveBanner} className="space-y-3 bg-[#faf8f5] p-4 rounded-xl border border-stone-200 text-xs">
-                    <div>
-                      <label className="font-bold text-stone-700 block mb-1">Main Banner Title</label>
+                  <form onSubmit={handleSaveBanner} className="space-y-4 bg-[#faf8f5] p-4 rounded-xl border border-stone-200 text-xs">
+                    
+                    {/* Laptop Banner Setting */}
+                    <div className="p-3 bg-white rounded-lg border border-stone-200">
+                      <h4 className="font-bold text-stone-800 uppercase mb-1">1. Laptop / Desktop Banner (Wide: 1920×600 px)</h4>
+                      <p className="text-[10px] text-stone-500 mb-2">Displayed on computers and large screens.</p>
                       <input 
                         type="text" 
-                        value={bannerTitle} 
-                        onChange={e => setBannerTitle(e.target.value)}
-                        className="w-full bg-white border rounded p-2 text-xs" 
-                        required
+                        placeholder="Image URL (https://...)" 
+                        value={desktopBannerUrl.startsWith("data:") ? "" : desktopBannerUrl} 
+                        onChange={e => setDesktopBannerUrl(e.target.value)}
+                        className="w-full bg-stone-50 border rounded p-2 text-xs mb-2"
                       />
-                    </div>
-                    <div>
-                      <label className="font-bold text-stone-700 block mb-1">Background Image URL</label>
-                      <input 
-                        type="text" 
-                        value={bannerMediaUrl.startsWith("data:") ? "" : bannerMediaUrl} 
-                        onChange={e => {
-                          setBannerMediaUrl(e.target.value);
-                          setBannerMediaType("image");
-                        }}
-                        className="w-full bg-white border rounded p-2 text-xs" 
-                        placeholder="https://..."
-                      />
-                    </div>
-                    <div>
-                      <label className="font-bold text-stone-700 block mb-1">Or Upload File from Device</label>
                       <input 
                         type="file" 
-                        accept="image/*,video/mp4"
-                        onChange={handleBannerMediaUpload}
-                        className="w-full bg-white border rounded p-2 text-xs" 
+                        accept="image/*" 
+                        onChange={handleDesktopUpload}
+                        className="w-full text-xs" 
                       />
                     </div>
-                    <button type="submit" className="w-full bg-[#5a0017] text-white font-bold py-2.5 rounded text-xs uppercase tracking-wider mt-2">
-                      Save Banner
+
+                    {/* Mobile Banner Setting */}
+                    <div className="p-3 bg-white rounded-lg border border-stone-200">
+                      <h4 className="font-bold text-stone-800 uppercase mb-1">2. Mobile Phone Banner (Square/Portrait: 1080×1080 or 1080×1350 px)</h4>
+                      <p className="text-[10px] text-stone-500 mb-2">Displayed on mobile screens without side-cropping.</p>
+                      <input 
+                        type="text" 
+                        placeholder="Image URL (https://...)" 
+                        value={mobileBannerUrl.startsWith("data:") ? "" : mobileBannerUrl} 
+                        onChange={e => setMobileBannerUrl(e.target.value)}
+                        className="w-full bg-stone-50 border rounded p-2 text-xs mb-2"
+                      />
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleMobileUpload}
+                        className="w-full text-xs" 
+                      />
+                    </div>
+
+                    {/* Overlay Text Customization */}
+                    <div className="p-3 bg-white rounded-lg border border-stone-200 space-y-2">
+                      <h4 className="font-bold text-stone-800 uppercase mb-1">3. Optional Text Overlay</h4>
+                      <p className="text-[10px] text-stone-500">Leave blank if your banner graphics already have words on them.</p>
+                      <div>
+                        <label className="text-[10px] font-bold text-stone-600 block">Main Title</label>
+                        <input 
+                          type="text" 
+                          value={bannerTitle} 
+                          onChange={e => setBannerTitle(e.target.value)}
+                          className="w-full bg-stone-50 border rounded p-2 text-xs" 
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-stone-600 block">Subtitle</label>
+                        <input 
+                          type="text" 
+                          value={bannerSubtitle} 
+                          onChange={e => setBannerSubtitle(e.target.value)}
+                          className="w-full bg-stone-50 border rounded p-2 text-xs" 
+                        />
+                      </div>
+                    </div>
+
+                    <button type="submit" className="w-full bg-[#5a0017] text-white font-bold py-2.5 rounded text-xs uppercase tracking-wider">
+                      Save Both Banners
                     </button>
                   </form>
                 )}
@@ -567,7 +598,6 @@
           <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-200">
             <div className="max-w-6xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between">
               
-              {/* Brand Logo & Name */}
               <div 
                 className="flex items-center gap-2 cursor-pointer shrink-0" 
                 onClick={() => { setActiveProduct(null); setSelectedCat("All"); window.scrollTo({top: 0, behavior: 'smooth'}); }}
@@ -583,9 +613,7 @@
                 </div>
               </div>
 
-              {/* Header Contact Buttons (WhatsApp & Instagram Only) */}
               <div className="flex items-center gap-1.5 sm:gap-2">
-                {/* Instagram Icon */}
                 <a 
                   href={INSTAGRAM_URL} 
                   target="_blank" 
@@ -598,7 +626,6 @@
                   </svg>
                 </a>
 
-                {/* WhatsApp Button */}
                 <a 
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=Hello%20Lotus%20Collection,%20I%20am%20interested%20in%20your%20jewellery.`}
                   target="_blank" 
@@ -613,7 +640,6 @@
               </div>
             </div>
 
-            {/* Horizontal Scroll Category Strip */}
             <div className="bg-[#faf6ee] border-t border-b border-stone-200 py-2 px-3 overflow-x-auto no-scrollbar">
               <div className="flex justify-start sm:justify-center items-center gap-5 whitespace-nowrap text-xs font-semibold tracking-wider uppercase text-stone-700">
                 {CATEGORIES.map(c => (
@@ -637,42 +663,73 @@
             />
           ) : (
             <main>
-              {/* 3. HERO BANNER */}
-              <section className="relative min-h-[380px] sm:min-h-[460px] flex items-center justify-center text-center text-white px-4 overflow-hidden">
-                {banner.mediaType === "video" ? (
-                  <video 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline 
-                    className="absolute inset-0 w-full h-full object-cover"
-                    src={banner.mediaUrl}
+              {/* 3. DUAL BANNER SECTION (KUSHAL STYLE: SEPARATE MOBILE & LAPTOP) */}
+              <section className="relative overflow-hidden w-full">
+                
+                {/* A. MOBILE BANNER: Visible on phones (sm:hidden) */}
+                <div className="block sm:hidden w-full relative">
+                  <img 
+                    src={banner.mobileUrl || banner.desktopUrl} 
+                    alt="Lotus Jewellery Mobile Collection"
+                    className="w-full h-auto object-cover block"
                   />
-                ) : (
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center animate-hero-bg"
-                    style={{ backgroundImage: `url('${banner.mediaUrl}')` }}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#120307]/75 via-[#340713]/70 to-[#0e0205]/85" />
-
-                <div className="relative z-10 max-w-2xl mx-auto py-12">
-                  <span className="text-[#f7e6b5] text-[10px] sm:text-xs font-semibold tracking-[0.25em] uppercase block mb-2">
-                    {banner.subtitle}
-                  </span>
-                  <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif font-bold tracking-wide uppercase leading-tight mb-3 drop-shadow">
-                    {banner.title}
-                  </h2>
-                  <p className="italic text-stone-200 text-xs sm:text-sm font-serif max-w-md mx-auto mb-6 px-2">
-                    {banner.description}
-                  </p>
-                  <a 
-                    href="#catalogue" 
-                    className="bg-[#99793d] text-white px-6 py-2.5 text-xs uppercase tracking-widest font-bold rounded shadow inline-block"
-                  >
-                    View Jewellery
-                  </a>
+                  {/* Subtle dark gradient overlay only if title text is present */}
+                  {banner.title && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent flex flex-col justify-end p-5 text-center text-white">
+                      {banner.subtitle && (
+                        <span className="text-[#f7e6b5] text-[10px] font-semibold tracking-widest uppercase block mb-1">
+                          {banner.subtitle}
+                        </span>
+                      )}
+                      <h2 className="text-xl font-serif font-bold tracking-wide uppercase leading-tight drop-shadow mb-1">
+                        {banner.title}
+                      </h2>
+                      <div className="mt-2">
+                        <a 
+                          href="#catalogue" 
+                          className="bg-[#99793d] text-white px-5 py-2 text-[10px] uppercase tracking-widest font-bold rounded shadow inline-block"
+                        >
+                          View Jewellery
+                        </a>
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                {/* B. LAPTOP / DESKTOP BANNER: Visible on tablets & laptops (hidden sm:block) */}
+                <div className="hidden sm:block w-full relative min-h-[460px] md:min-h-[520px] bg-stone-900">
+                  <img 
+                    src={banner.desktopUrl} 
+                    alt="Lotus Jewellery Desktop Collection"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  {banner.title && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent flex items-center px-12 lg:px-20 text-white">
+                      <div className="max-w-xl text-left">
+                        {banner.subtitle && (
+                          <span className="text-[#f7e6b5] text-xs font-semibold tracking-[0.3em] uppercase block mb-2">
+                            {banner.subtitle}
+                          </span>
+                        )}
+                        <h2 className="text-3xl md:text-5xl font-serif font-bold tracking-wide uppercase leading-tight mb-3 drop-shadow-md">
+                          {banner.title}
+                        </h2>
+                        {banner.description && (
+                          <p className="italic text-stone-200 text-sm font-serif mb-6 leading-relaxed">
+                            {banner.description}
+                          </p>
+                        )}
+                        <a 
+                          href="#catalogue" 
+                          className="bg-[#99793d] hover:bg-[#b58f4a] text-white px-7 py-3 text-xs uppercase tracking-widest font-bold rounded shadow-lg inline-block transition"
+                        >
+                          Explore Collection
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
               </section>
 
               {/* 4. PRODUCT CATALOGUE SECTION */}
@@ -686,7 +743,6 @@
                     <p className="text-[11px] text-stone-500">Tap any picture to open details & zoom</p>
                   </div>
 
-                  {/* Mobile 2-Column Responsive Grid */}
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
                     {filtered.map(product => (
                       <div 
@@ -739,7 +795,7 @@
               <div>
                 <h4 className="font-serif text-[#f7e6b5] font-bold text-sm tracking-widest uppercase">Lotus Collection Jewellers</h4>
                 <p className="text-stone-400 text-[11px] mt-1">{STORE_ADDRESS}</p>
-                <p className="text-[#99793d] text-[11px] mt-0.5">Direct: 7996957565 / 7996953111</p>
+                <p className="text-[#99793d] text-[11px] mt-0.5">Direct: +91 7996957565 / +91 7996953111</p>
               </div>
 
               <div className="pt-2">
